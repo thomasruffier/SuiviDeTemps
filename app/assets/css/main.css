@@ -4,7 +4,7 @@
 
 @theme {
   --color-primary: #2185c5;
-  --font-titre: "Lora", serif;
+  --font-titre: "Permanent Marker", serif;
   --font-texte: "Libre Franklin", sans-serif;
   --color-uibg: var(--ui-bg);
   --color-uitext: var(--ui-text-muted);

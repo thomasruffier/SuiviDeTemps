@@ -1,6 +1,10 @@
 <template>
+  <div class="mb-4 text-3xl text-center font-titre">
+    Suivi de temps La Pierre qui Mousse
+  </div>
+  <SvgLogo class="mx-auto mb-8 w-20" />
   <div class="text-sm">
-    <div class="p-2 mb-4 border border-primary/40">
+    <div class="p-2 mb-8 border border-primary/40">
       <div>
         <div class="flex justify-between items-baseline">
           <div>
