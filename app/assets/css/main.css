@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-primary: #2185c5;
+  --font-titre: "Lora", serif;
+  --font-texte: "Libre Franklin", sans-serif;
+  --color-uibg: var(--ui-bg);
+  --color-uitext: var(--ui-text-muted);
+  --color-uiborder: var(--ui-border);
+}
+body {
+  font-family: var(--font-texte);
+}
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--color-lien);
+}
+.dark\:prose-invert {
+  &:where(.dark, .dark *) {
+    --tw-prose-invert-body: var(--ui-text-muted);
+  }
+}
