@@ -13,9 +13,18 @@
           </div>
           {{
             tempsADepenser >= 0
-              ? "Il me reste à attribuer :" + formatDuree(tempsADepenser)
+              ? "Il me reste à attribuer : " + formatDuree(tempsADepenser)
               : "J'ai trop attribué de :" + formatDuree(tempsADepenser + 30)
-          }}
+          }}.
+          <span class="p-2 text-xs rounded-2xl bg-primary/10">
+            J'ai fini à
+            {{
+              heureDeFin.toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            }}
+          </span>
         </div>
         <USlider
           v-if="tempsADepenser >= 0"
@@ -139,11 +148,16 @@
         <UButton
           :label="`Supprimer`"
           color="neutral"
-          @click="modalSupprimerProjet = false"
+          @click="
+            modalSupprimerProjet = false;
+            projetsStore.deleteProjet(nomSupprimerProjet);
+            nomSupprimerProjet = '';
+          "
           variant="solid" />
       </div>
     </template>
   </UModal>
+  <pre class="text-xs">{{ projets }}</pre>
 </template>
 
 <script setup lang="ts">
@@ -196,7 +210,7 @@ const sommeDureesAujourdHhui = computed(() => {
   let retour = 0;
   projets.value.forEach((e) => {
     retour +=
-      e.durees.find((j) => (j.date = new Date().toDateString()))?.duree ?? 0;
+      e.durees.find((j) => j.date === new Date().toDateString())?.duree ?? 0;
   });
   return retour;
 });
@@ -213,7 +227,7 @@ watch(
   (nouv) => {
     nouv.forEach((e) => {
       const dureeTemp =
-        e.durees.find((e) => e.date == new Date().toDateString())?.duree ?? 0;
+        e.durees.find((e) => e.date === new Date().toDateString())?.duree ?? 0;
       if (!dureesTotales.value.some((j) => j.nom == e.nom)) {
         dureesTotales.value.push({
           nom: e.nom,
@@ -233,7 +247,7 @@ watch(
       const copy = structuredClone(toRaw(p));
       const exist = nouv.find((d) => d.nom === p.nom);
 
-      if (exist && exist.duree !== 0) {
+      if (exist) {
         let today = new Date().toDateString();
         let d = copy.durees.find((x) => x.date === today);
 
@@ -254,6 +268,14 @@ watch(
   },
   { deep: true }
 );
+
+const heureDeFin = computed(() => {
+  return new Date(
+    heureDebutComp.value +
+      sommeDureesAujourdHhui.value * 60000 +
+      (jaiMange.value ? midiPause.value * 60000 : 0)
+  );
+});
 
 const formatDuree = (value: number) => {
   const heures = Math.floor(value / 60);
@@ -278,6 +300,7 @@ function sommeDurees(e: Projet) {
   });
   return `soit un total de ${calculJour(temp)} jour`;
 }
+
 watch(now, (nouv) => {
   if (nouv.getHours() > 13 && !jaiMangeClic.value) jaiMange.value = true;
 });
