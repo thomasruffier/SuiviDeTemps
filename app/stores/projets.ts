@@ -81,6 +81,22 @@ export const useProjets = defineStore("projets", () => {
       await saveProjets();
     }
   }
+  async function incrementDuree(nom: string, madate: Date, delta: number) {
+    const projet = projets.value.find((p) => p.nom === nom);
+    if (!projet) return;
+
+    const dateKey = madate.toDateString();
+
+    let entry = projet.durees.find((d) => d.date === dateKey);
+    if (!entry) {
+      entry = { date: dateKey, duree: 0 };
+      projet.durees.push(entry);
+    }
+
+    entry.duree += delta;
+
+    await saveProjets();
+  }
   async function updateAllProjets(projet: Projet[]) {
     projets.value = projet;
     await saveProjets();
@@ -92,6 +108,7 @@ export const useProjets = defineStore("projets", () => {
     fetchProjets,
     createProjet,
     updateProjet,
+    incrementDuree,
     updateAllProjets,
     saveProjets,
     deleteProjet,

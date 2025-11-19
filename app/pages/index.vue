@@ -32,13 +32,13 @@
           v-model="tempsADepenser"
           disabled
           :min="0"
-          :max="600"></USlider>
+          :max="6000"></USlider>
         <USlider
           v-else
           class="my-4"
           v-model="tempsADepenser"
           disabled
-          :max="-600"
+          :max="-6000"
           :ui="{
             track: 'bg-gray-200',
             range: 'bg-red-500',
@@ -65,10 +65,16 @@
           :step="30"
           class="my-4"
           :min="0"
-          :max="240"
+          :max="2400"
           v-model="midiPause" />
       </div>
+      <div class="flex justify-end w-full">
+        <URadioGroup
+          :items="[{ label: 'Je règle mon temps manuellement', value: '' }]"
+          v-model="jetravaillesur" />
+      </div>
     </div>
+
     <div
       class="pb-6 px-4 pt-2 bg-primary/10 odd:bg-white dark:odd:bg-uibg grid grid-cols-[10em_1fr_1em] gap-4 justify-center items-center"
       v-for="e in projets"
@@ -76,12 +82,18 @@
       <div>{{ e.nom }}</div>
       <template v-for="k in dureesTotales" :key="`k-${k.nom}`">
         <div v-if="k.nom == e.nom">
-          <div class="flex gap-1 justify-end items-baseline pb-2 text-right">
+          <div class="flex gap-4 justify-end items-center pb-2 text-right">
             <div class="text-sm">{{ formatDuree(k.duree) }}</div>
             <div class="text-xs italic opacity-65">{{ sommeDurees(e) }}</div>
+            <div>
+              <URadioGroup
+                size="xs"
+                :items="[{ label: 'Je travaille dessus', value: e.nom }]"
+                v-model="jetravaillesur" />
+            </div>
           </div>
           <div>
-            <USlider :step="30" :min="0" :max="600" v-model="k.duree">
+            <USlider :step="30" :min="0" :max="6000" v-model="k.duree">
             </USlider>
           </div>
         </div>
@@ -173,6 +185,7 @@ const midiPause = ref(90);
 const heureDebut = ref("08:30");
 const jaiMange = ref(false);
 const jaiMangeClic = ref(false);
+const jetravaillesur = ref("");
 interface DureesTotale {
   nom: string;
   duree: number;
@@ -180,7 +193,6 @@ interface DureesTotale {
 const dureesTotales: Ref<DureesTotale[]> = ref([]);
 
 const projets: Ref<Projet[]> = computed(() => projetsStore.projets);
-
 const heureDebutListe = ref([
   "07:00",
   "07:30",
@@ -221,6 +233,17 @@ const tempsADepenser = computed(() => {
     sommeDureesAujourdHhui.value -
     (jaiMange.value ? midiPause.value : 0)
   );
+});
+watch(tempsADepenser, (nouv, anc) => {
+  watch(tempsADepenser, async (nouv) => {
+    const nom = jetravaillesur.value;
+    if (!nom) return;
+
+    // On ne fait quelque chose que si le temps à répartir augmente
+    if (nouv > 0) {
+      await projetsStore.incrementDuree(nom, new Date(), nouv);
+    }
+  });
 });
 watch(
   projets,
