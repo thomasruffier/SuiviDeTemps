@@ -91,9 +91,9 @@
 
     <div
       class="pb-6 px-4 pt-2 bg-primary/10 odd:bg-white dark:odd:bg-uibg grid grid-cols-[10em_1fr_1em] gap-4 justify-center items-center"
-      v-for="e in projets"
+      v-for="e in projetsComp"
       :key="e.nom">
-      <div>{{ e.nom }}</div>
+      <div :class="e.isArchived ? 'text-amber-700' : ''">{{ e.nom }}</div>
       <template v-for="k in dureesTotales" :key="`k-${k.nom}`">
         <div v-if="k.nom == e.nom">
           <div class="flex gap-4 justify-end items-center pb-2 text-right">
@@ -138,6 +138,7 @@
         variant="subtle" />
       <UIcon
         class="cursor-pointer hover:text-primary"
+        :class="e.isArchived ? 'bg-amber-700' : ''"
         :name="e.isArchived ? 'lucide-archive-restore' : 'lucide-archive'"
         :label="e.isArchived ? 'Désarchiver le projet' : 'Archiver le projet'"
         @click="
@@ -261,9 +262,9 @@ function handleFileImport(event: Event) {
   }
 }
 
-const projets: Ref<Projet[]> = computed(() => {
-  const allProjets = [...projetsStore.projets];
-  let filtered = allProjets;
+const projets: Ref<Projet[]> = computed(() => projetsStore.projets);
+const projetsComp = computed(() => {
+  let filtered = projets.value;
   if (!afficherArchives.value) {
     filtered = filtered.filter((p) => !p.isArchived);
   }
