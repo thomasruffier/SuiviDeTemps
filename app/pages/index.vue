@@ -91,10 +91,23 @@
                 :items="[{ label: 'Je travaille dessus', value: e.nom }]"
                 v-model="jetravaillesur" />
             </div>
+            <UButton
+              @click="toggleSlider(e)"
+              :label="
+                sliderVisible[e.nom]
+                  ? 'Masquer les jours'
+                  : 'Voir tous les jours'
+              "
+              color="neutral"
+              variant="subtle"
+              size="xs" />
           </div>
           <div>
             <USlider :step="30" :min="0" :max="6000" v-model="k.duree">
             </USlider>
+          </div>
+          <div v-if="sliderVisible[e.nom]">
+            <SliderJours :projet="e" />
           </div>
         </div>
       </template>
@@ -202,11 +215,16 @@ const jaiMange = ref(false);
 const jaiMangeClic = ref(false);
 const jetravaillesur = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
+const sliderVisible = ref<Record<string, boolean>>({});
 interface DureesTotale {
   nom: string;
   duree: number;
 }
 const dureesTotales: Ref<DureesTotale[]> = ref([]);
+
+function toggleSlider(projet: Projet) {
+  sliderVisible.value[projet.nom] = !sliderVisible.value[projet.nom];
+}
 
 function handleFileImport(event: Event) {
   const target = event.target as HTMLInputElement;
