@@ -13,7 +13,7 @@ export const useProjets = defineStore("projets", () => {
       nom: p.nom,
       derniereModification: new Date(p.derniereModification).toDateString(),
       durees: p.durees.map((d: any) => ({
-        date: new Date().toDateString(),
+        date: new Date(d.date).toDateString(), // Conserver la date originale
         duree: d.duree,
       })),
     }));
@@ -112,5 +112,33 @@ export const useProjets = defineStore("projets", () => {
     updateAllProjets,
     saveProjets,
     deleteProjet,
+    exportProjets: async function exportProjets() {
+      const raw = toRaw(projets.value);
+      const blob = new Blob([JSON.stringify(raw, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "projets.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },
+    importProjets: async function importProjets(file: File) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        if (e.target?.result) {
+          try {
+            const importedProjets = JSON.parse(e.target.result as string);
+            await updateAllProjets(importedProjets);
+          } catch (error) {
+            console.error("Erreur lors de l'importation des projets:", error);
+          }
+        }
+      };
+      reader.readAsText(file);
+    },
   };
 });

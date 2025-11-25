@@ -122,6 +122,21 @@
       :label="voirTout ? 'Masquer les projet' : 'Voir tous les projets'"
       color="neutral"
       variant="subtle" />
+    <UButton
+      @click="projetsStore.exportProjets()"
+      label="Exporter Projet"
+      color="neutral"
+      variant="subtle" />
+    <UButton
+      @click="fileInput?.click()"
+      label="Importer Projet"
+      color="neutral"
+      variant="subtle" />
+    <input
+      type="file"
+      ref="fileInput"
+      style="display: none"
+      @change="handleFileImport" />
   </div>
 
   <pre class="text-xs" v-if="voirTout">{{ projets }}</pre>
@@ -186,11 +201,19 @@ const heureDebut = ref("08:30");
 const jaiMange = ref(false);
 const jaiMangeClic = ref(false);
 const jetravaillesur = ref("");
+const fileInput = ref<HTMLInputElement | null>(null);
 interface DureesTotale {
   nom: string;
   duree: number;
 }
 const dureesTotales: Ref<DureesTotale[]> = ref([]);
+
+function handleFileImport(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    projetsStore.importProjets(target.files[0]);
+  }
+}
 
 const projets: Ref<Projet[]> = computed(() => projetsStore.projets);
 const heureDebutListe = ref([
@@ -215,7 +238,7 @@ const now = useNow();
 const tempsEcouleDepuisCeMatin = computed(() => {
   const diffMs = now.value.getTime() - heureDebutComp.value;
   const minutes = diffMs / 1000 / 60;
-  return Math.round(minutes / 15) * 15;
+  return Math.round(minutes / 30) * 30;
 });
 
 const sommeDureesAujourdHhui = computed(() => {
@@ -234,16 +257,28 @@ const tempsADepenser = computed(() => {
     (jaiMange.value ? midiPause.value : 0)
   );
 });
-watch(tempsADepenser, (nouv, anc) => {
-  watch(tempsADepenser, async (nouv) => {
-    const nom = jetravaillesur.value;
-    if (!nom) return;
+watch(tempsADepenser, async (nouv, anc) => {
+  const nom = jetravaillesur.value;
+  if (!nom) return;
 
-    // On ne fait quelque chose que si le temps à répartir augmente
-    if (nouv > 0) {
-      await projetsStore.incrementDuree(nom, new Date(), nouv);
+  // On ne fait quelque chose que si le temps à répartir augmente
+  if (nouv > 0) {
+    await projetsStore.incrementDuree(nom, new Date(), nouv);
+
+    // Mettre à jour la durée totale pour le projet en cours
+    const projet = projets.value.find((p) => p.nom === nom);
+    if (projet) {
+      const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nom);
+      if (dureeTotaleProjet) {
+        dureeTotaleProjet.duree = nouv;
+      } else {
+        dureesTotales.value.push({
+          nom: nom,
+          duree: nouv,
+        });
+      }
     }
-  });
+  }
 });
 watch(
   projets,
