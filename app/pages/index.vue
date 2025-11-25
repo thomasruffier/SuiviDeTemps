@@ -74,6 +74,14 @@
           v-model="jetravaillesur" />
       </div>
     </div>
+    <div class="flex gap-2">
+      <UButton
+        @click="toggleTri"
+        size="xs"
+        :label="triParNom ? 'Trier par durée' : 'Trier par nom'"
+        color="neutral"
+        variant="subtle" />
+    </div>
 
     <div
       class="pb-6 px-4 pt-2 bg-primary/10 odd:bg-white dark:odd:bg-uibg grid grid-cols-[10em_1fr_1em] gap-4 justify-center items-center"
@@ -204,6 +212,12 @@
 const projetsStore = useProjets();
 projetsStore.fetchProjets();
 
+const triParNom = ref(true);
+
+function toggleTri() {
+  triParNom.value = !triParNom.value;
+}
+
 const modalNouveauProjet = ref(false);
 const modalSupprimerProjet = ref(false);
 const nomSupprimerProjet = ref("");
@@ -233,7 +247,20 @@ function handleFileImport(event: Event) {
   }
 }
 
-const projets: Ref<Projet[]> = computed(() => projetsStore.projets);
+const projets: Ref<Projet[]> = computed(() => {
+  const allProjets = [...projetsStore.projets];
+  if (triParNom.value) {
+    return allProjets.sort((a, b) => a.nom.localeCompare(b.nom));
+  } else {
+    return allProjets.sort((a, b) => {
+      const dureeA =
+        a.durees.find((d) => d.date === new Date().toDateString())?.duree ?? 0;
+      const dureeB =
+        b.durees.find((d) => d.date === new Date().toDateString())?.duree ?? 0;
+      return dureeB - dureeA;
+    });
+  }
+});
 const heureDebutListe = ref([
   "07:00",
   "07:30",
