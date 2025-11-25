@@ -16,6 +16,7 @@ export const useProjets = defineStore("projets", () => {
         date: new Date(d.date).toDateString(), // Conserver la date originale
         duree: d.duree,
       })),
+      isArchived: p.isArchived ?? false,
     }));
   }
 
@@ -36,6 +37,7 @@ export const useProjets = defineStore("projets", () => {
         },
       ],
       derniereModification: new Date().toDateString(),
+      isArchived: false,
     });
 
     await saveProjets();
@@ -103,6 +105,24 @@ export const useProjets = defineStore("projets", () => {
     return true;
   }
 
+  function archiveProjet(nom: string) {
+    const projet = projets.value.find((e) => e.nom === nom);
+    if (!projet) return false;
+
+    projet.isArchived = true;
+    saveProjets();
+    return true;
+  }
+
+  function unarchiveProjet(nom: string) {
+    const projet = projets.value.find((e) => e.nom === nom);
+    if (!projet) return false;
+
+    projet.isArchived = false;
+    saveProjets();
+    return true;
+  }
+
   return {
     projets,
     fetchProjets,
@@ -112,6 +132,8 @@ export const useProjets = defineStore("projets", () => {
     updateAllProjets,
     saveProjets,
     deleteProjet,
+    archiveProjet,
+    unarchiveProjet,
     exportProjets: async function exportProjets() {
       const raw = toRaw(projets.value);
       const blob = new Blob([JSON.stringify(raw, null, 2)], {

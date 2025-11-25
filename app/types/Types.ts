@@ -6,4 +6,5 @@ export interface Projet {
   nom: string;
   durees: Duree[];
   derniereModification: string;
+  isArchived?: boolean;
 }

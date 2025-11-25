@@ -74,11 +74,17 @@
           v-model="jetravaillesur" />
       </div>
     </div>
-    <div class="flex gap-2">
+    <div class="flex gap-2 justify-between pb-2 border-b border-b-gray-200">
       <UButton
         @click="toggleTri"
         size="xs"
         :label="triParNom ? 'Trier par durée' : 'Trier par nom'"
+        color="neutral"
+        variant="subtle" />
+      <UButton
+        @click="afficherArchives = !afficherArchives"
+        :label="afficherArchives ? 'Masquer les archivés' : 'Voir les archivés'"
+        size="xs"
         color="neutral"
         variant="subtle" />
     </div>
@@ -130,6 +136,17 @@
         "
         color="neutral"
         variant="subtle" />
+      <UIcon
+        class="cursor-pointer hover:text-primary"
+        :name="e.isArchived ? 'lucide-archive-restore' : 'lucide-archive'"
+        :label="e.isArchived ? 'Désarchiver le projet' : 'Archiver le projet'"
+        @click="
+          e.isArchived
+            ? projetsStore.unarchiveProjet(e.nom)
+            : projetsStore.archiveProjet(e.nom)
+        "
+        color="neutral"
+        variant="subtle" />
     </div>
   </div>
   <div class="flex gap-4 justify-end mt-8">
@@ -138,11 +155,7 @@
       label="Ajouter un projet"
       color="neutral"
       variant="subtle" />
-    <UButton
-      @click="voirTout = !voirTout"
-      :label="voirTout ? 'Masquer les projet' : 'Voir tous les projets'"
-      color="neutral"
-      variant="subtle" />
+
     <UButton
       @click="projetsStore.exportProjets()"
       label="Exporter Projet"
@@ -213,6 +226,7 @@ const projetsStore = useProjets();
 projetsStore.fetchProjets();
 
 const triParNom = ref(true);
+const afficherArchives = ref(false);
 
 function toggleTri() {
   triParNom.value = !triParNom.value;
@@ -249,10 +263,14 @@ function handleFileImport(event: Event) {
 
 const projets: Ref<Projet[]> = computed(() => {
   const allProjets = [...projetsStore.projets];
+  let filtered = allProjets;
+  if (!afficherArchives.value) {
+    filtered = filtered.filter((p) => !p.isArchived);
+  }
   if (triParNom.value) {
-    return allProjets.sort((a, b) => a.nom.localeCompare(b.nom));
+    return filtered.sort((a, b) => a.nom.localeCompare(b.nom));
   } else {
-    return allProjets.sort((a, b) => {
+    return filtered.sort((a, b) => {
       const dureeA =
         a.durees.find((d) => d.date === new Date().toDateString())?.duree ?? 0;
       const dureeB =
