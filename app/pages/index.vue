@@ -65,7 +65,7 @@
           :step="30"
           class="my-4"
           :min="0"
-          :max="2400"
+          :max="300"
           v-model="midiPause" />
       </div>
       <div class="flex justify-end w-full">
@@ -117,7 +117,7 @@
               size="xs" />
           </div>
           <div>
-            <USlider :step="30" :min="0" :max="6000" v-model="k.duree">
+            <USlider :step="30" :min="0" :max="720" v-model="k.duree">
             </USlider>
           </div>
           <div v-if="sliderVisible[e.nom]">
