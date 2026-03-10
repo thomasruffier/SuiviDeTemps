@@ -7,6 +7,31 @@
       <p class="mt-1 text-xs opacity-40">La Pierre qui Mousse</p>
     </div>
 
+    <!-- Dernier jour de facturation -->
+    <div
+      class="flex justify-between items-center p-4 mb-4 rounded-xl border transition-colors"
+      :class="
+        isFacturationOverdue
+          ? 'border-error/50 bg-error/5 text-error font-semibold'
+          : 'border-white/10 bg-white/5'
+      ">
+      <div class="flex gap-2 items-center">
+        <UIcon
+          name="lucide-calendar-clock"
+          :class="isFacturationOverdue ? 'text-error' : 'opacity-40'" />
+        <span class="text-sm">Dernier jour de facturation</span>
+      </div>
+      <UInput
+        v-model="dernierJourFacturation"
+        type="date"
+        size="sm"
+        variant="none"
+        class="w-40 text-right"
+        :ui="{
+          base: isFacturationOverdue ? 'text-error font-bold' : 'opacity-70',
+        }" />
+    </div>
+
     <!-- Paramètres de la journée (collapsible) -->
     <div class="mb-6 params-section">
       <button class="params-toggle" @click="paramsOuverts = !paramsOuverts">
@@ -273,6 +298,16 @@ const heureDebut = ref("08:30");
 const jaiMange = ref(false);
 const jaiMangeClic = ref(false);
 const jetravaillesur = ref("");
+const dernierJourFacturation = ref("");
+
+const isFacturationOverdue = computed(() => {
+  if (!dernierJourFacturation.value) return false;
+  const lastDate = new Date(dernierJourFacturation.value);
+  const diffTime = Math.abs(now.value.getTime() - lastDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 45;
+});
+
 const fileInput = ref<HTMLInputElement | null>(null);
 const sliderVisible = ref<Record<string, boolean>>({});
 
@@ -521,6 +556,17 @@ watch(now, (nouv) => {
     jaiMange.value = false;
     jaiMangeClic.value = false;
   }
+});
+
+onMounted(() => {
+  const savedDate = localStorage.getItem("dernierJourFacturation");
+  if (savedDate) {
+    dernierJourFacturation.value = savedDate;
+  }
+});
+
+watch(dernierJourFacturation, (nouv) => {
+  localStorage.setItem("dernierJourFacturation", nouv);
 });
 </script>
 
