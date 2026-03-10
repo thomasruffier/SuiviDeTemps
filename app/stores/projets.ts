@@ -56,7 +56,7 @@ export const useProjets = defineStore("projets", () => {
   async function addNewDateToProjet(
     nom: string,
     madate: Date,
-    duree: number = 0
+    duree: number = 0,
   ) {
     const projet = projets.value.find((e) => e.nom === nom);
     if (!projet) return false;
@@ -134,6 +134,20 @@ export const useProjets = defineStore("projets", () => {
     deleteProjet,
     archiveProjet,
     unarchiveProjet,
+    deleteJourFromProjet: async function deleteJourFromProjet(
+      nom: string,
+      date: string,
+    ) {
+      const projet = projets.value.find((e) => e.nom === nom);
+      if (!projet) return false;
+
+      const index = projet.durees.findIndex((d) => d.date === date);
+      if (index === -1) return false;
+
+      projet.durees.splice(index, 1);
+      await saveProjets();
+      return true;
+    },
     exportProjets: async function exportProjets() {
       const raw = toRaw(projets.value);
       const blob = new Blob([JSON.stringify(raw, null, 2)], {

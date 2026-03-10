@@ -121,7 +121,15 @@
             </USlider>
           </div>
           <div v-if="sliderVisible[e.nom]">
-            <SliderJours :projet="e" />
+            <SliderJours
+              :projet="e"
+              @update-duree="
+                (date: string, duree: number) =>
+                  onJourDureeUpdate(e.nom, date, duree)
+              "
+              @supprimer-jour="
+                (date: string) => onJourSupprimer(e.nom, date)
+              " />
           </div>
         </div>
       </template>
@@ -251,8 +259,30 @@ interface DureesTotale {
 }
 const dureesTotales: Ref<DureesTotale[]> = ref([]);
 
+// --- Détection du changement de jour (reset minuit) ---
+const currentDay = ref(new Date().toDateString());
+
 function toggleSlider(projet: Projet) {
   sliderVisible.value[projet.nom] = !sliderVisible.value[projet.nom];
+}
+
+// --- Handlers pour l'édition jour par jour (SliderJours) ---
+async function onJourDureeUpdate(
+  nomProjet: string,
+  date: string,
+  duree: number,
+) {
+  await projetsStore.updateProjet(nomProjet, duree, new Date(date));
+
+  // Si c'est aujourd'hui, mettre aussi à jour dureesTotales pour synchroniser la jauge
+  if (date === new Date().toDateString()) {
+    const dt = dureesTotales.value.find((d) => d.nom === nomProjet);
+    if (dt) dt.duree = duree;
+  }
+}
+
+async function onJourSupprimer(nomProjet: string, date: string) {
+  await projetsStore.deleteJourFromProjet(nomProjet, date);
 }
 
 function handleFileImport(event: Event) {
@@ -358,7 +388,7 @@ watch(
       }
     });
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(
@@ -388,14 +418,14 @@ watch(
 
     projetsStore.updateAllProjets(updated);
   },
-  { deep: true }
+  { deep: true },
 );
 
 const heureDeFin = computed(() => {
   return new Date(
     heureDebutComp.value +
       sommeDureesAujourdHhui.value * 60000 +
-      (jaiMange.value ? midiPause.value * 60000 : 0)
+      (jaiMange.value ? midiPause.value * 60000 : 0),
   );
 });
 
@@ -404,7 +434,7 @@ const formatDuree = (value: number) => {
   const minutes = value % 60;
   return `${String(heures).padStart(2, "0")}:${String(minutes).padStart(
     2,
-    "0"
+    "0",
   )}`;
 };
 const calculJour = (value: number) => {
@@ -425,6 +455,23 @@ function sommeDurees(e: Projet) {
 
 watch(now, (nouv) => {
   if (nouv.getHours() > 13 && !jaiMangeClic.value) jaiMange.value = true;
+
+  // Détection du changement de jour (reset minuit)
+  const today = nouv.toDateString();
+  if (today !== currentDay.value) {
+    currentDay.value = today;
+
+    // Reset toutes les jauges pour le nouveau jour
+    dureesTotales.value = dureesTotales.value.map((d) => ({
+      nom: d.nom,
+      duree: 0,
+    }));
+
+    // Reset l'état de travail
+    jetravaillesur.value = "";
+    jaiMange.value = false;
+    jaiMangeClic.value = false;
+  }
 });
 </script>
 
