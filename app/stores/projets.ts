@@ -25,9 +25,9 @@ export const useProjets = defineStore("projets", () => {
   function reviveProjets(data: any[]): Projet[] {
     return data.map((p, index) => ({
       nom: p.nom,
-      derniereModification: new Date(p.derniereModification).toDateString(),
+      derniereModification: p.derniereModification,
       durees: p.durees.map((d: any) => ({
-        date: new Date(d.date).toDateString(),
+        date: d.date,
         duree: d.duree,
         note: d.note ?? "",
       })),
@@ -130,21 +130,21 @@ export const useProjets = defineStore("projets", () => {
     return true;
   }
 
-  function archiveProjet(nom: string) {
+  async function archiveProjet(nom: string) {
     const projet = projets.value.find((e) => e.nom === nom);
     if (!projet) return false;
 
     projet.isArchived = true;
-    saveProjets();
+    await saveProjets();
     return true;
   }
 
-  function unarchiveProjet(nom: string) {
+  async function unarchiveProjet(nom: string) {
     const projet = projets.value.find((e) => e.nom === nom);
     if (!projet) return false;
 
     projet.isArchived = false;
-    saveProjets();
+    await saveProjets();
     return true;
   }
 

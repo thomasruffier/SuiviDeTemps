@@ -47,13 +47,13 @@
           color="primary"
           variant="solid"
           :style="{ '--ui-primary': projet.couleur }" />
-        <UDropdown :items="menuItems" :popper="{ placement: 'bottom-end' }">
+        <UDropdownMenu :items="menuItems" dir="rtl">
           <UButton
             icon="lucide-more-vertical"
             color="neutral"
             variant="ghost"
             size="xs" />
-        </UDropdown>
+        </UDropdownMenu>
       </div>
     </div>
 
@@ -200,18 +200,18 @@ const menuItems = computed(() => [
       icon: props.projet.isArchived
         ? "lucide-archive-restore"
         : "lucide-archive",
-      click: () => emit(props.projet.isArchived ? "unarchive" : "archive"),
+      onSelect: () => emit(props.projet.isArchived ? "unarchive" : "archive"),
     },
     {
       label: "Renommer",
       icon: "lucide-pen",
-      click: () => emit("rename"),
+      onSelect: () => emit("rename"),
     },
     {
       label: "Supprimer",
       icon: "lucide-trash-2",
       color: "error" as const,
-      click: () => emit("delete"),
+      onSelect: () => emit("delete"),
     },
   ],
 ]);
