@@ -1,233 +1,252 @@
 <template>
-  <div class="mb-4 text-3xl text-center font-titre">
-    Suivi de temps La Pierre qui Mousse
-  </div>
-  <SvgLogo class="mx-auto mb-8 w-20" />
-  <div class="text-sm">
-    <div class="p-2 mb-8 border border-primary/40">
-      <div>
-        <div class="flex justify-between items-baseline">
-          <div>
-            J'ai commencé à
-            <USelect :items="heureDebutListe" v-model="heureDebut" />
-          </div>
-          {{
-            tempsADepenser >= 0
-              ? "Il me reste à attribuer : " + formatDuree(tempsADepenser)
-              : "J'ai trop attribué de :" + formatDuree(tempsADepenser + 30)
-          }}.
-          <span class="p-2 text-xs rounded-2xl bg-primary/10">
-            J'ai fini à
-            {{
-              heureDeFin.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            }}
+  <div class="mx-auto max-w-4xl">
+    <!-- Header -->
+    <div class="mb-6 text-center">
+      <SvgLogo class="mx-auto mb-3 w-14 opacity-80" />
+      <h1 class="text-2xl tracking-wide font-titre">Suivi de temps</h1>
+      <p class="mt-1 text-xs opacity-40">La Pierre qui Mousse</p>
+    </div>
+
+    <!-- Paramètres de la journée (collapsible) -->
+    <div class="mb-6 params-section">
+      <button class="params-toggle" @click="paramsOuverts = !paramsOuverts">
+        <div class="flex gap-2 items-center">
+          <UIcon name="lucide-settings-2" class="text-sm opacity-50" />
+          <span class="text-sm">Paramètres du jour</span>
+        </div>
+        <div class="flex gap-3 items-center">
+          <span class="font-mono text-xs opacity-50">
+            Début {{ heureDebut }} · Pause {{ formatDuree(midiPause) }}
           </span>
+          <UIcon
+            :name="paramsOuverts ? 'lucide-chevron-up' : 'lucide-chevron-down'"
+            class="text-sm opacity-40" />
         </div>
-        <USlider
-          v-if="tempsADepenser >= 0"
-          class="my-4"
-          v-model="tempsADepenser"
-          disabled
-          :min="0"
-          :max="6000"></USlider>
-        <USlider
-          v-else
-          class="my-4"
-          v-model="tempsADepenser"
-          disabled
-          :max="-6000"
-          :ui="{
-            track: 'bg-gray-200',
-            range: 'bg-red-500',
-            thumb: 'bg-red-700 ring-red-700',
-          }"
-          :min="0"></USlider>
-      </div>
-      <div class="">
-        <div class="flex justify-between w-full">
-          <div>Pause midi : {{ formatDuree(midiPause) }}</div>
-          <div></div>
-          <label class="flex gap-2">
-            J'ai déjà mangé ?<UCheckbox
-              @click="jaiMangeClic = true"
-              v-model="jaiMange" />
-          </label>
-        </div>
-        <USlider
-          :ui="{
-            track: 'bg-green-100',
-            range: 'bg-green-500',
-            thumb: 'bg-green-700 ring-green-700',
-          }"
-          :step="30"
-          class="my-4"
-          :min="0"
-          :max="300"
-          v-model="midiPause" />
-      </div>
-      <div class="flex justify-end w-full">
-        <URadioGroup
-          :items="[{ label: 'Je règle mon temps manuellement', value: '' }]"
-          v-model="jetravaillesur" />
-      </div>
-    </div>
-    <div class="flex gap-2 justify-between pb-2 border-b border-b-gray-200">
-      <UButton
-        @click="toggleTri"
-        size="xs"
-        :label="triParNom ? 'Trier par durée' : 'Trier par nom'"
-        color="neutral"
-        variant="subtle" />
-      <UButton
-        @click="afficherArchives = !afficherArchives"
-        :label="afficherArchives ? 'Masquer les archivés' : 'Voir les archivés'"
-        size="xs"
-        color="neutral"
-        variant="subtle" />
-    </div>
-
-    <div
-      class="pb-6 px-4 pt-2 bg-primary/10 odd:bg-white dark:odd:bg-uibg grid grid-cols-[10em_1fr_1em] gap-4 justify-center items-center"
-      v-for="e in projetsComp"
-      :key="e.nom">
-      <div :class="e.isArchived ? 'text-amber-700' : ''">{{ e.nom }}</div>
-      <template v-for="k in dureesTotales" :key="`k-${k.nom}`">
-        <div v-if="k.nom == e.nom">
-          <div class="flex gap-4 justify-end items-center pb-2 text-right">
-            <div class="text-sm">{{ formatDuree(k.duree) }}</div>
-            <div class="text-xs italic opacity-65">{{ sommeDurees(e) }}</div>
-            <div>
-              <URadioGroup
-                size="xs"
-                :items="[{ label: 'Je travaille dessus', value: e.nom }]"
-                v-model="jetravaillesur" />
-            </div>
-            <UButton
-              @click="toggleSlider(e)"
-              :label="
-                sliderVisible[e.nom]
-                  ? 'Masquer les jours'
-                  : 'Voir tous les jours'
-              "
-              color="neutral"
-              variant="subtle"
-              size="xs" />
-          </div>
+      </button>
+      <div v-if="paramsOuverts" class="params-body">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <!-- Heure de début -->
           <div>
-            <USlider :step="30" :min="0" :max="720" v-model="k.duree">
-            </USlider>
+            <label class="block mb-1 text-xs opacity-60">Heure de début</label>
+            <USelect
+              :items="heureDebutListe"
+              v-model="heureDebut"
+              class="w-full" />
           </div>
-          <div v-if="sliderVisible[e.nom]">
-            <SliderJours
-              :projet="e"
-              @update-duree="
-                (date: string, duree: number) =>
-                  onJourDureeUpdate(e.nom, date, duree)
-              "
-              @supprimer-jour="
-                (date: string) => onJourSupprimer(e.nom, date)
-              " />
+          <!-- Pause midi -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs opacity-60"
+                >Pause midi : {{ formatDuree(midiPause) }}</label
+              >
+              <label class="flex gap-2 items-center text-xs opacity-60">
+                J'ai déjà mangé ?
+                <UCheckbox @click="jaiMangeClic = true" v-model="jaiMange" />
+              </label>
+            </div>
+            <USlider
+              :ui="{
+                track: 'bg-green-100',
+                range: 'bg-green-500',
+                thumb: 'bg-green-700 ring-green-700',
+              }"
+              :step="30"
+              :min="0"
+              :max="300"
+              v-model="midiPause" />
           </div>
         </div>
-      </template>
+        <!-- Mode manuel -->
+        <div class="flex justify-end mt-3">
+          <URadioGroup
+            :items="[{ label: 'Je règle mon temps manuellement', value: '' }]"
+            v-model="jetravaillesur" />
+        </div>
+      </div>
+    </div>
 
-      <UIcon
-        class="cursor-pointer hover:text-primary"
-        name="lucide-trash"
-        label="Supprimer le projet"
-        @click="
+    <!-- Dashboard résumé -->
+    <DashboardResume
+      :projets="projets"
+      :temps-a-depenser="tempsADepenser"
+      :somme-durees="sommeDureesAujourdHhui"
+      :heure-debut="heureDebut"
+      :heure-de-fin="heureDeFin"
+      :midi-pause="midiPause"
+      :jai-mange="jaiMange" />
+
+    <!-- Contrôles de tri / filtre -->
+    <div class="flex gap-2 justify-between items-center mb-4">
+      <div class="flex gap-2">
+        <UButton
+          @click="toggleTri"
+          size="xs"
+          :icon="
+            triParNom
+              ? 'lucide-arrow-down-a-z'
+              : 'lucide-arrow-down-wide-narrow'
+          "
+          :label="triParNom ? 'Par durée' : 'Par nom'"
+          color="neutral"
+          variant="subtle" />
+        <UButton
+          @click="afficherArchives = !afficherArchives"
+          size="xs"
+          :icon="afficherArchives ? 'lucide-eye-off' : 'lucide-archive'"
+          :label="afficherArchives ? 'Masquer archivés' : 'Voir archivés'"
+          color="neutral"
+          variant="subtle" />
+      </div>
+      <UButton
+        @click="modalNouveauProjet = true"
+        size="xs"
+        icon="lucide-plus"
+        label="Nouveau projet"
+        color="primary"
+        variant="solid" />
+    </div>
+
+    <!-- Grille des projets -->
+    <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2">
+      <ProjetCard
+        v-for="e in projetsComp"
+        :key="e.nom"
+        :projet="e"
+        :duree-totale="getDureeTotale(e.nom)"
+        :is-active="jetravaillesur === e.nom"
+        :slider-visible="!!sliderVisible[e.nom]"
+        @select="(nom: string) => (jetravaillesur = nom)"
+        @update-duree="(duree: number) => setDureeTotale(e.nom, duree)"
+        @update-note="
+          (note: string) =>
+            projetsStore.updateNote(e.nom, new Date().toDateString(), note)
+        "
+        @toggle-slider="toggleSlider(e)"
+        @jour-update-duree="
+          (date: string, duree: number) => onJourDureeUpdate(e.nom, date, duree)
+        "
+        @jour-supprimer="(date: string) => onJourSupprimer(e.nom, date)"
+        @jour-update-note="
+          (date: string, note: string) =>
+            projetsStore.updateNote(e.nom, date, note)
+        "
+        @archive="projetsStore.archiveProjet(e.nom)"
+        @unarchive="projetsStore.unarchiveProjet(e.nom)"
+        @delete="
           modalSupprimerProjet = true;
           nomSupprimerProjet = e.nom;
         "
-        color="neutral"
-        variant="subtle" />
-      <UIcon
-        class="cursor-pointer hover:text-primary"
-        :class="e.isArchived ? 'bg-amber-700' : ''"
-        :name="e.isArchived ? 'lucide-archive-restore' : 'lucide-archive'"
-        :label="e.isArchived ? 'Désarchiver le projet' : 'Archiver le projet'"
-        @click="
-          e.isArchived
-            ? projetsStore.unarchiveProjet(e.nom)
-            : projetsStore.archiveProjet(e.nom)
-        "
-        color="neutral"
-        variant="subtle" />
+        @rename="
+          modalRenommerProjet = true;
+          nomRenommerProjet = e.nom;
+          nouveauNomProjet = e.nom;
+        " />
     </div>
-  </div>
-  <div class="flex gap-4 justify-end mt-8">
-    <UButton
-      @click="modalNouveauProjet = true"
-      label="Ajouter un projet"
-      color="neutral"
-      variant="subtle" />
 
-    <UButton
-      @click="projetsStore.exportProjets()"
-      label="Exporter Projet"
-      color="neutral"
-      variant="subtle" />
-    <UButton
-      @click="fileInput?.click()"
-      label="Importer Projet"
-      color="neutral"
-      variant="subtle" />
-    <input
-      type="file"
-      ref="fileInput"
-      style="display: none"
-      @change="handleFileImport" />
-  </div>
+    <!-- Stats hebdomadaires -->
+    <StatsHebdo :projets="projets" class="mb-8" />
 
-  <pre class="text-xs" v-if="voirTout">{{ projets }}</pre>
-  <UModal
-    scrollable
-    title="Ajouter un projet"
-    v-model:open="modalNouveauProjet">
-    <template #body>
-      <UFormField label="Nom">
-        <UInput
-          class="w-full"
-          v-model="projetNom"
-          placeholder="Nom du projet" />
-      </UFormField>
-    </template>
-    <template #footer>
-      <div class="flex justify-end w-full">
-        <UButton
-          :label="`Ajouter ${projetNom}`"
-          color="neutral"
-          @click="
-            projetsStore.createProjet(projetNom);
-            modalNouveauProjet = false;
-            projetNom = '';
-          "
-          variant="solid" />
-      </div>
-    </template>
-  </UModal>
-  <UModal
-    scrollable
-    title="Supprimer le projet"
-    v-model:open="modalSupprimerProjet">
-    <template #footer>
-      <div class="flex justify-end w-full">
-        <UButton
-          :label="`Supprimer`"
-          color="neutral"
-          @click="
-            modalSupprimerProjet = false;
-            projetsStore.deleteProjet(nomSupprimerProjet);
-            nomSupprimerProjet = '';
-          "
-          variant="solid" />
-      </div>
-    </template>
-  </UModal>
-  <pre class="text-xs">{{ projets }}</pre>
+    <!-- Actions globales -->
+    <div class="flex gap-2 justify-center pb-8">
+      <UButton
+        @click="projetsStore.exportProjets()"
+        icon="lucide-download"
+        label="Exporter"
+        size="xs"
+        color="neutral"
+        variant="subtle" />
+      <UButton
+        @click="fileInput?.click()"
+        icon="lucide-upload"
+        label="Importer"
+        size="xs"
+        color="neutral"
+        variant="subtle" />
+      <input
+        type="file"
+        ref="fileInput"
+        style="display: none"
+        @change="handleFileImport" />
+    </div>
+
+    <!-- Modal Nouveau Projet -->
+    <UModal scrollable title="Nouveau projet" v-model:open="modalNouveauProjet">
+      <template #body>
+        <UFormField label="Nom du projet">
+          <UInput
+            class="w-full"
+            v-model="projetNom"
+            placeholder="Nom du projet"
+            @keyup.enter="createAndClose" />
+        </UFormField>
+      </template>
+      <template #footer>
+        <div class="flex justify-end w-full">
+          <UButton
+            :label="`Créer ${projetNom}`"
+            color="primary"
+            @click="createAndClose"
+            variant="solid"
+            :disabled="!projetNom.trim()" />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Modal Supprimer Projet -->
+    <UModal
+      scrollable
+      title="Supprimer le projet"
+      v-model:open="modalSupprimerProjet">
+      <template #body>
+        <p class="text-sm">
+          Êtes-vous sûr de vouloir supprimer
+          <strong>{{ nomSupprimerProjet }}</strong> et tout son historique ?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex gap-2 justify-end w-full">
+          <UButton
+            label="Annuler"
+            color="neutral"
+            variant="subtle"
+            @click="modalSupprimerProjet = false" />
+          <UButton
+            label="Supprimer"
+            color="error"
+            variant="solid"
+            @click="deleteAndClose" />
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Modal Renommer Projet -->
+    <UModal
+      scrollable
+      title="Renommer le projet"
+      v-model:open="modalRenommerProjet">
+      <template #body>
+        <UFormField label="Nouveau nom">
+          <UInput
+            class="w-full"
+            v-model="nouveauNomProjet"
+            placeholder="Nouveau nom"
+            @keyup.enter="renameAndClose" />
+        </UFormField>
+      </template>
+      <template #footer>
+        <div class="flex justify-end w-full">
+          <UButton
+            label="Renommer"
+            color="primary"
+            @click="renameAndClose"
+            variant="solid"
+            :disabled="
+              !nouveauNomProjet.trim() || nouveauNomProjet === nomRenommerProjet
+            " />
+        </div>
+      </template>
+    </UModal>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -236,6 +255,7 @@ projetsStore.fetchProjets();
 
 const triParNom = ref(true);
 const afficherArchives = ref(false);
+const paramsOuverts = ref(false);
 
 function toggleTri() {
   triParNom.value = !triParNom.value;
@@ -243,9 +263,11 @@ function toggleTri() {
 
 const modalNouveauProjet = ref(false);
 const modalSupprimerProjet = ref(false);
+const modalRenommerProjet = ref(false);
 const nomSupprimerProjet = ref("");
+const nomRenommerProjet = ref("");
+const nouveauNomProjet = ref("");
 const projetNom = ref("");
-const voirTout = ref(false);
 const midiPause = ref(90);
 const heureDebut = ref("08:30");
 const jaiMange = ref(false);
@@ -253,6 +275,7 @@ const jaiMangeClic = ref(false);
 const jetravaillesur = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 const sliderVisible = ref<Record<string, boolean>>({});
+
 interface DureesTotale {
   nom: string;
   duree: number;
@@ -266,6 +289,62 @@ function toggleSlider(projet: Projet) {
   sliderVisible.value[projet.nom] = !sliderVisible.value[projet.nom];
 }
 
+function getDureeTotale(nom: string): number {
+  return dureesTotales.value.find((d) => d.nom === nom)?.duree ?? 0;
+}
+
+function setDureeTotale(nom: string, duree: number) {
+  const dt = dureesTotales.value.find((d) => d.nom === nom);
+  if (dt) {
+    dt.duree = duree;
+  } else {
+    dureesTotales.value.push({ nom, duree });
+  }
+}
+
+function createAndClose() {
+  if (!projetNom.value.trim()) return;
+  projetsStore.createProjet(projetNom.value.trim());
+  modalNouveauProjet.value = false;
+  projetNom.value = "";
+}
+
+function deleteAndClose() {
+  modalSupprimerProjet.value = false;
+  projetsStore.deleteProjet(nomSupprimerProjet.value);
+  nomSupprimerProjet.value = "";
+}
+
+function renameAndClose() {
+  if (
+    !nouveauNomProjet.value.trim() ||
+    nouveauNomProjet.value === nomRenommerProjet.value
+  )
+    return;
+  // Also update dureesTotales key
+  const dt = dureesTotales.value.find((d) => d.nom === nomRenommerProjet.value);
+  if (dt) dt.nom = nouveauNomProjet.value.trim();
+
+  // Update sliderVisible
+  if (sliderVisible.value[nomRenommerProjet.value]) {
+    sliderVisible.value[nouveauNomProjet.value.trim()] = true;
+    delete sliderVisible.value[nomRenommerProjet.value];
+  }
+
+  // Update jetravaillesur if needed
+  if (jetravaillesur.value === nomRenommerProjet.value) {
+    jetravaillesur.value = nouveauNomProjet.value.trim();
+  }
+
+  projetsStore.renameProjet(
+    nomRenommerProjet.value,
+    nouveauNomProjet.value.trim(),
+  );
+  modalRenommerProjet.value = false;
+  nomRenommerProjet.value = "";
+  nouveauNomProjet.value = "";
+}
+
 // --- Handlers pour l'édition jour par jour (SliderJours) ---
 async function onJourDureeUpdate(
   nomProjet: string,
@@ -274,7 +353,7 @@ async function onJourDureeUpdate(
 ) {
   await projetsStore.updateProjet(nomProjet, duree, new Date(date));
 
-  // Si c'est aujourd'hui, mettre aussi à jour dureesTotales pour synchroniser la jauge
+  // Si c'est aujourd'hui, mettre aussi à jour dureesTotales
   if (date === new Date().toDateString()) {
     const dt = dureesTotales.value.find((d) => d.nom === nomProjet);
     if (dt) dt.duree = duree;
@@ -310,6 +389,7 @@ const projetsComp = computed(() => {
     });
   }
 });
+
 const heureDebutListe = ref([
   "07:00",
   "07:30",
@@ -351,29 +431,26 @@ const tempsADepenser = computed(() => {
     (jaiMange.value ? midiPause.value : 0)
   );
 });
+
 watch(tempsADepenser, async (nouv, anc) => {
   const nom = jetravaillesur.value;
   if (!nom) return;
 
-  // On ne fait quelque chose que si le temps à répartir augmente
   if (nouv > 0) {
     await projetsStore.incrementDuree(nom, new Date(), nouv);
 
-    // Mettre à jour la durée totale pour le projet en cours
     const projet = projets.value.find((p) => p.nom === nom);
     if (projet) {
       const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nom);
       if (dureeTotaleProjet) {
         dureeTotaleProjet.duree = nouv;
       } else {
-        dureesTotales.value.push({
-          nom: nom,
-          duree: nouv,
-        });
+        dureesTotales.value.push({ nom, duree: nouv });
       }
     }
   }
 });
+
 watch(
   projets,
   (nouv) => {
@@ -381,10 +458,7 @@ watch(
       const dureeTemp =
         e.durees.find((e) => e.date === new Date().toDateString())?.duree ?? 0;
       if (!dureesTotales.value.some((j) => j.nom == e.nom)) {
-        dureesTotales.value.push({
-          nom: e.nom,
-          duree: dureeTemp,
-        });
+        dureesTotales.value.push({ nom: e.nom, duree: dureeTemp });
       }
     });
   },
@@ -406,10 +480,7 @@ watch(
         if (d) {
           d.duree = exist.duree;
         } else {
-          copy.durees.push({
-            date: today,
-            duree: exist.duree,
-          });
+          copy.durees.push({ date: today, duree: exist.duree, note: "" });
         }
       }
 
@@ -432,26 +503,8 @@ const heureDeFin = computed(() => {
 const formatDuree = (value: number) => {
   const heures = Math.floor(value / 60);
   const minutes = value % 60;
-  return `${String(heures).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0",
-  )}`;
+  return `${String(heures).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 };
-const calculJour = (value: number) => {
-  const demiJour = 180;
-  const tolerance = 120;
-  let demiJoursEntiers = Math.floor(value / demiJour);
-  const reste = value % demiJour;
-  if (reste > tolerance) demiJoursEntiers += 1;
-  return demiJoursEntiers / 2;
-};
-function sommeDurees(e: Projet) {
-  let temp = 0;
-  e.durees.forEach((j) => {
-    temp += j.duree ?? 0;
-  });
-  return `soit un total de ${calculJour(temp)} jour`;
-}
 
 watch(now, (nouv) => {
   if (nouv.getHours() > 13 && !jaiMangeClic.value) jaiMange.value = true;
@@ -460,14 +513,10 @@ watch(now, (nouv) => {
   const today = nouv.toDateString();
   if (today !== currentDay.value) {
     currentDay.value = today;
-
-    // Reset toutes les jauges pour le nouveau jour
     dureesTotales.value = dureesTotales.value.map((d) => ({
       nom: d.nom,
       duree: 0,
     }));
-
-    // Reset l'état de travail
     jetravaillesur.value = "";
     jaiMange.value = false;
     jaiMangeClic.value = false;
@@ -475,4 +524,28 @@ watch(now, (nouv) => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.params-section {
+  border-radius: 0.75rem;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-bg);
+  overflow: hidden;
+}
+.params-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.params-toggle:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+.params-body {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--ui-border);
+}
+</style>

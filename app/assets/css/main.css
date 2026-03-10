@@ -3,8 +3,8 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #2185c5;
-  --font-titre: "Permanent Marker", serif;
+  --color-primary: #6366f1;
+  --font-titre: "Lora", serif;
   --font-texte: "Libre Franklin", sans-serif;
   --color-uibg: var(--ui-bg);
   --color-uitext: var(--ui-text-muted);
@@ -20,4 +20,21 @@ body {
   &:where(.dark, .dark *) {
     --tw-prose-invert-body: var(--ui-text-muted);
   }
+}
+
+/* Animations globales */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth transitions pour les elements dynamiques */
+* {
+  scroll-behavior: smooth;
 }

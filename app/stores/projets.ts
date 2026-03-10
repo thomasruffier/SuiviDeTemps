@@ -2,6 +2,20 @@ export const useProjets = defineStore("projets", () => {
   const { $db } = useNuxtApp();
   const projets = ref<Projet[]>([]);
 
+  // Couleurs prédéfinies pour les projets
+  const couleursDisponibles = [
+    "#6366f1", // indigo
+    "#8b5cf6", // violet
+    "#ec4899", // pink
+    "#f43f5e", // rose
+    "#f97316", // orange
+    "#eab308", // yellow
+    "#22c55e", // green
+    "#14b8a6", // teal
+    "#06b6d4", // cyan
+    "#3b82f6", // blue
+  ];
+
   async function fetchProjets() {
     const saved: any = await $db.getItem("projets");
     projets.value = saved ? reviveProjets(saved) : [];
@@ -9,19 +23,23 @@ export const useProjets = defineStore("projets", () => {
   }
 
   function reviveProjets(data: any[]): Projet[] {
-    return data.map((p) => ({
+    return data.map((p, index) => ({
       nom: p.nom,
       derniereModification: new Date(p.derniereModification).toDateString(),
       durees: p.durees.map((d: any) => ({
-        date: new Date(d.date).toDateString(), // Conserver la date originale
+        date: new Date(d.date).toDateString(),
         duree: d.duree,
+        note: d.note ?? "",
       })),
       isArchived: p.isArchived ?? false,
+      description: p.description ?? "",
+      couleur:
+        p.couleur ?? couleursDisponibles[index % couleursDisponibles.length],
     }));
   }
 
   async function saveProjets() {
-    const raw = toRaw(projets.value); // enlève tous les proxies
+    const raw = toRaw(projets.value);
     await $db.setItem("projets", structuredClone(raw));
   }
 
@@ -34,10 +52,14 @@ export const useProjets = defineStore("projets", () => {
         {
           duree: 0,
           date: new Date().toDateString(),
+          note: "",
         },
       ],
       derniereModification: new Date().toDateString(),
       isArchived: false,
+      description: "",
+      couleur:
+        couleursDisponibles[projets.value.length % couleursDisponibles.length],
     });
 
     await saveProjets();
@@ -64,6 +86,7 @@ export const useProjets = defineStore("projets", () => {
     projet.durees.push({
       date: madate.toDateString(),
       duree,
+      note: "",
     });
 
     await saveProjets();
@@ -83,6 +106,7 @@ export const useProjets = defineStore("projets", () => {
       await saveProjets();
     }
   }
+
   async function incrementDuree(nom: string, madate: Date, delta: number) {
     const projet = projets.value.find((p) => p.nom === nom);
     if (!projet) return;
@@ -91,7 +115,7 @@ export const useProjets = defineStore("projets", () => {
 
     let entry = projet.durees.find((d) => d.date === dateKey);
     if (!entry) {
-      entry = { date: dateKey, duree: 0 };
+      entry = { date: dateKey, duree: 0, note: "" };
       projet.durees.push(entry);
     }
 
@@ -99,6 +123,7 @@ export const useProjets = defineStore("projets", () => {
 
     await saveProjets();
   }
+
   async function updateAllProjets(projet: Projet[]) {
     projets.value = projet;
     await saveProjets();
@@ -123,8 +148,99 @@ export const useProjets = defineStore("projets", () => {
     return true;
   }
 
+  async function renameProjet(ancienNom: string, nouveauNom: string) {
+    if (projets.value.some((e) => e.nom === nouveauNom)) return false;
+    const projet = projets.value.find((e) => e.nom === ancienNom);
+    if (!projet) return false;
+
+    projet.nom = nouveauNom;
+    projet.derniereModification = new Date().toDateString();
+    await saveProjets();
+    return true;
+  }
+
+  async function updateNote(nomProjet: string, date: string, note: string) {
+    const projet = projets.value.find((e) => e.nom === nomProjet);
+    if (!projet) return false;
+
+    const duree = projet.durees.find((d) => d.date === date);
+    if (!duree) return false;
+
+    duree.note = note;
+    projet.derniereModification = new Date().toDateString();
+    await saveProjets();
+    return true;
+  }
+
+  async function updateDescription(nomProjet: string, description: string) {
+    const projet = projets.value.find((e) => e.nom === nomProjet);
+    if (!projet) return false;
+
+    projet.description = description;
+    projet.derniereModification = new Date().toDateString();
+    await saveProjets();
+    return true;
+  }
+
+  async function updateCouleur(nomProjet: string, couleur: string) {
+    const projet = projets.value.find((e) => e.nom === nomProjet);
+    if (!projet) return false;
+
+    projet.couleur = couleur;
+    await saveProjets();
+    return true;
+  }
+
+  function getStatsHebdo() {
+    const today = new Date();
+    const lundi = new Date(today);
+    const jour = today.getDay();
+    lundi.setDate(today.getDate() - (jour === 0 ? 6 : jour - 1));
+    lundi.setHours(0, 0, 0, 0);
+
+    const jours: {
+      date: string;
+      label: string;
+      projets: { nom: string; duree: number; couleur: string; note: string }[];
+    }[] = [];
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(lundi);
+      d.setDate(lundi.getDate() + i);
+      const dateStr = d.toDateString();
+      const label = d.toLocaleDateString("fr-FR", {
+        weekday: "short",
+        day: "numeric",
+      });
+
+      const projetsDuJour: {
+        nom: string;
+        duree: number;
+        couleur: string;
+        note: string;
+      }[] = [];
+
+      projets.value.forEach((p) => {
+        const entry = p.durees.find((dur) => dur.date === dateStr);
+        if (entry && entry.duree > 0) {
+          projetsDuJour.push({
+            nom: p.nom,
+            duree: entry.duree,
+            couleur: p.couleur ?? "#6366f1",
+            note: entry.note ?? "",
+          });
+        }
+      });
+
+      jours.push({ date: dateStr, label, projets: projetsDuJour });
+    }
+
+    return jours;
+  }
+
   return {
     projets,
+    couleursDisponibles,
     fetchProjets,
     createProjet,
     updateProjet,
@@ -134,6 +250,11 @@ export const useProjets = defineStore("projets", () => {
     deleteProjet,
     archiveProjet,
     unarchiveProjet,
+    renameProjet,
+    updateNote,
+    updateDescription,
+    updateCouleur,
+    getStatsHebdo,
     deleteJourFromProjet: async function deleteJourFromProjet(
       nom: string,
       date: string,

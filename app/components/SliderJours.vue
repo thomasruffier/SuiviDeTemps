@@ -14,48 +14,64 @@
       <div
         v-for="(jour, index) in joursTries"
         :key="jour.date"
-        class="grid grid-cols-[8em_4em_1fr_3em] gap-3 items-center px-4 py-2.5 transition-colors hover:bg-primary/5"
+        class="px-4 py-2.5 transition-colors hover:bg-primary/5"
         :class="isToday(jour.date) ? 'bg-primary/10 font-medium' : ''">
-        <!-- Date -->
-        <div
-          class="text-sm"
-          :class="isToday(jour.date) ? 'text-primary' : 'opacity-70'">
-          <span
-            v-if="isToday(jour.date)"
-            class="inline-block mr-1 w-1.5 h-1.5 rounded-full bg-primary align-middle"></span>
-          {{ formatDate(jour.date) }}
+        <div class="grid grid-cols-[8em_4em_1fr_3em] gap-3 items-center">
+          <!-- Date -->
+          <div
+            class="text-sm"
+            :class="isToday(jour.date) ? 'text-primary' : 'opacity-70'">
+            <span
+              v-if="isToday(jour.date)"
+              class="inline-block mr-1 w-1.5 h-1.5 rounded-full bg-primary align-middle"></span>
+            {{ formatDate(jour.date) }}
+          </div>
+
+          <!-- Durée affichée -->
+          <div
+            class="text-sm font-mono text-right tabular-nums"
+            :class="jour.duree > 0 ? '' : 'opacity-40'">
+            {{ formatDuree(jour.duree) }}
+          </div>
+
+          <!-- Slider d'édition -->
+          <USlider
+            :step="30"
+            :min="0"
+            :max="720"
+            :model-value="jour.duree"
+            @update:model-value="
+              (val: number | undefined) => {
+                if (val !== undefined) updateDuree(index, val);
+              }
+            "
+            class="mx-2" />
+
+          <!-- Bouton supprimer -->
+          <UButton
+            v-if="!isToday(jour.date)"
+            icon="lucide-x"
+            color="neutral"
+            variant="ghost"
+            size="xs"
+            @click="supprimerJour(index)"
+            class="opacity-40 hover:opacity-100 hover:text-red-500 justify-self-center" />
+          <div v-else></div>
         </div>
 
-        <!-- Durée affichée -->
-        <div
-          class="text-sm font-mono text-right tabular-nums"
-          :class="jour.duree > 0 ? '' : 'opacity-40'">
-          {{ formatDuree(jour.duree) }}
+        <!-- Note du jour -->
+        <div class="mt-1.5 pl-[8em] ml-3">
+          <input
+            type="text"
+            class="w-full text-xs px-2 py-1 rounded border border-transparent bg-transparent hover:border-primary/20 focus:border-primary/40 outline-none transition-colors"
+            :class="jour.note ? 'opacity-70' : 'opacity-30'"
+            :placeholder="'Ajouter une note...'"
+            :value="jour.note ?? ''"
+            @change="
+              (e: Event) =>
+                updateNote(index, (e.target as HTMLInputElement).value)
+            " />
         </div>
-
-        <!-- Slider d'édition -->
-        <USlider
-          :step="30"
-          :min="0"
-          :max="720"
-          :model-value="jour.duree"
-          @update:model-value="
-            (val: number | undefined) => {
-              if (val !== undefined) updateDuree(index, val);
-            }
-          "
-          class="mx-2" />
-
-        <!-- Bouton supprimer -->
-        <UButton
-          v-if="!isToday(jour.date)"
-          icon="lucide-x"
-          color="neutral"
-          variant="ghost"
-          size="xs"
-          @click="supprimerJour(index)"
-          class="opacity-40 hover:opacity-100 hover:text-red-500 justify-self-center" />
-        <div v-else></div>
       </div>
     </div>
   </div>
@@ -71,6 +87,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update-duree", date: string, duree: number): void;
   (e: "supprimer-jour", date: string): void;
+  (e: "update-note", date: string, note: string): void;
 }>();
 
 const projetNom = computed(() => props.projet.nom);
@@ -106,6 +123,12 @@ function updateDuree(sortedIndex: number, newDuree: number) {
   const jour = joursTries.value[sortedIndex];
   if (!jour) return;
   emit("update-duree", jour.date, newDuree);
+}
+
+function updateNote(sortedIndex: number, note: string) {
+  const jour = joursTries.value[sortedIndex];
+  if (!jour) return;
+  emit("update-note", jour.date, note);
 }
 
 function supprimerJour(sortedIndex: number) {
