@@ -16,7 +16,11 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "fr",
       },
-      link: [{ rel: "icon", type: "image/png", href: "/favicon.png" }],
+      link: [
+        { rel: "icon", type: "image/png", href: "/favicon.png" },
+        { rel: "apple-touch-icon", href: "/favicon.png" },
+      ],
+      meta: [{ name: "theme-color", content: "#3f454c" }],
     },
   },
   imports: {
