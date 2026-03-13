@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "متبع الوقت"
+  },
+  "header": {
+    "lastBillingDay": "آخر يوم للفوترة"
+  },
+  "params": {
+    "title": "إعدادات اليوم",
+    "startTime": "وقت البدء",
+    "lunchPause": "استراحة الغداء",
+    "alreadyEaten": "هل أكلت بالفعل؟",
+    "manualEntry": "أقوم بضبط وقتي يدويًا",
+    "summary": "البدء {start} · الاستراحة {pause}"
+  },
+  "dashboard": {
+    "worked": "تم العمل",
+    "remaining": "متبقي",
+    "overdue": "متأخر",
+    "estimatedEnd": "النهاية المتوقعة",
+    "activeProjects": "المشاريع النشطة",
+    "top": "الأعلى"
+  },
+  "controls": {
+    "sortByDuration": "حسب المدة",
+    "sortByName": "حسب الاسم",
+    "hideArchived": "إخفاء المؤرشفة",
+    "showArchived": "عرض المؤرشفة",
+    "newProject": "مشروع جديد"
+  },
+  "project": {
+    "archive": "أرشفة",
+    "unarchive": "إلغاء الأرشفة",
+    "rename": "إعادة تسمية",
+    "delete": "حذف",
+    "notes": "ملاحظات",
+    "history": "السجل",
+    "totalDuration": "المدة الإجمالية",
+    "work": "بدء العمل",
+    "inProgress": "قيد التنفيذ",
+    "today": "اليوم",
+    "total": "الإجمالي",
+    "noteLabel": "ملاحظة اليوم",
+    "notePrompt": "ماذا عملت اليوم...",
+    "showHistory": "عرض السجل",
+    "hideHistory": "إخفاء السجل",
+    "historyTitle": "السجل — {name}",
+    "daysCount": "{count} يوم | {count} يوم",
+    "addNote": "أضف ملاحظة..."
+  },
+  "stats": {
+    "weekly": "الإحصائيات الأسبوعية",
+    "currentWeek": "الأسبوع الحالي",
+    "total": "الإجمالي",
+    "monday": "الاثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد"
+  },
+  "actions": {
+    "export": "تصدير",
+    "import": "استيراد"
+  },
+  "modals": {
+    "newProjectTitle": "مشروع جديد",
+    "projectName": "اسم المشروع",
+    "create": "إنشاء {name}",
+    "deleteProjectTitle": "حذف المشروع",
+    "deleteConfirm": "هل أنت متأكد أنك تريد حذف {name} وكل سجله؟",
+    "cancel": "إلغاء",
+    "confirmDelete": "حذف",
+    "renameProjectTitle": "إعادة تسمية المشروع",
+    "newName": "اسم جديد",
+    "confirmRename": "إعادة تسمية"
+  }
+}

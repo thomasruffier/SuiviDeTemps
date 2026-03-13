@@ -10,10 +10,10 @@
     <div class="projet-card__header">
       <div class="flex items-center gap-2.5 min-w-0">
         <div
-          class="w-3 h-3 rounded-full flex-shrink-0 ring-2 ring-offset-1 transition-all"
+          class="w-3 h-3 rounded-full shrink-0 ring-2 ring-offset-1 transition-all"
           :class="
             isActive
-              ? 'ring-[var(--projet-color)] scale-125'
+              ? 'ring-(--projet-color) scale-125'
               : 'ring-transparent'
           "
           :style="{ backgroundColor: projet.couleur ?? '#6366f1' }"></div>
@@ -33,7 +33,7 @@
           v-if="!isActive"
           @click="$emit('select', projet.nom)"
           icon="lucide-play"
-          :label="'Travailler'"
+          :label="$t('project.work')"
           size="xs"
           :style="{ '--ui-primary': projet.couleur }"
           color="primary"
@@ -42,7 +42,7 @@
           v-else
           @click="$emit('select', '')"
           icon="lucide-pause"
-          label="En cours"
+          :label="$t('project.inProgress')"
           size="xs"
           color="primary"
           variant="solid"
@@ -66,10 +66,10 @@
             :style="{ color: projet.couleur }">
             {{ formatDuree(dureeTotale) }}
           </span>
-          <span class="text-xs opacity-50">aujourd'hui</span>
+          <span class="text-xs opacity-50">{{ $t('project.today') }}</span>
         </div>
         <div class="text-xs opacity-50 italic">
-          Total : {{ calculJour(sommeTotale) }} j
+          {{ $t('project.total') }} : {{ calculJour(sommeTotale) }} j
         </div>
       </div>
 
@@ -100,12 +100,12 @@
     <div class="projet-card__note">
       <div class="flex items-center gap-1.5 mb-1">
         <UIcon name="lucide-pencil-line" class="text-xs opacity-40" />
-        <span class="text-xs opacity-50">Note du jour</span>
+        <span class="text-xs opacity-50">{{ $t('project.noteLabel') }}</span>
       </div>
       <input
         type="text"
         class="note-input"
-        :placeholder="'Sur quoi j\'ai travaillé...'"
+        :placeholder="$t('project.notePrompt')"
         :value="noteAujourdHui"
         @change="
           (e: Event) =>
@@ -133,7 +133,7 @@
         :name="sliderVisible ? 'lucide-chevron-up' : 'lucide-chevron-down'"
         class="text-sm opacity-50" />
       <span class="text-xs opacity-50">
-        {{ sliderVisible ? "Masquer l'historique" : "Voir l'historique" }}
+        {{ sliderVisible ? $t('project.hideHistory') : $t('project.showHistory') }}
       </span>
     </button>
   </div>
@@ -196,19 +196,20 @@ const calculJour = (value: number) => {
 const menuItems = computed(() => [
   [
     {
-      label: props.projet.isArchived ? "Désarchiver" : "Archiver",
-      icon: props.projet.isArchived
-        ? "lucide-archive-restore"
-        : "lucide-archive",
-      onSelect: () => emit(props.projet.isArchived ? "unarchive" : "archive"),
+      label: props.projet.isArchived ? useI18n().t('project.unarchive') : useI18n().t('project.archive'),
+      icon: props.projet.isArchived ? "lucide-archive-restore" : "lucide-archive",
+      onSelect: () => {
+        if (props.projet.isArchived) emit("unarchive");
+        else emit("archive");
+      },
     },
     {
-      label: "Renommer",
+      label: useI18n().t('project.rename'),
       icon: "lucide-pen",
       onSelect: () => emit("rename"),
     },
     {
-      label: "Supprimer",
+      label: useI18n().t('project.delete'),
       icon: "lucide-trash-2",
       color: "error" as const,
       onSelect: () => emit("delete"),

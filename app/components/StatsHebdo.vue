@@ -3,10 +3,10 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-sm font-semibold flex items-center gap-2">
         <UIcon name="lucide-bar-chart-3" class="text-primary" />
-        Semaine en cours
+        {{ $t('stats.currentWeek') }}
       </h2>
       <div class="text-xs opacity-50 font-mono tabular-nums">
-        Total : {{ formatDuree(totalSemaine) }}
+        {{ $t('stats.total') }} : {{ formatDuree(totalSemaine) }}
       </div>
     </div>
 
@@ -78,7 +78,8 @@ const props = defineProps<{
 }>();
 
 const projetsStore = useProjets();
-const statsHebdo = computed(() => projetsStore.getStatsHebdo());
+const { locale } = useI18n();
+const statsHebdo = computed(() => projetsStore.getStatsHebdo(locale.value));
 
 const isToday = (dateStr: string) => dateStr === new Date().toDateString();
 

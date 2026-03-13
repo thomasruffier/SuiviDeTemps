@@ -4,10 +4,10 @@
     <div
       class="px-4 py-3 border-b border-primary/10 flex justify-between items-center">
       <h3 class="text-sm font-semibold opacity-80">
-        Historique — {{ projetNom }}
+        {{ $t('project.historyTitle', { name: projetNom }) }}
       </h3>
       <span class="text-xs opacity-50"
-        >{{ jours.length }} jour{{ jours.length > 1 ? "s" : "" }}</span
+        >{{ $t('project.daysCount', { count: jours.length }) }}</span
       >
     </div>
     <div class="divide-y divide-primary/10 max-h-80 overflow-y-auto">
@@ -65,7 +65,7 @@
             type="text"
             class="w-full text-xs px-2 py-1 rounded border border-transparent bg-transparent hover:border-primary/20 focus:border-primary/40 outline-none transition-colors"
             :class="jour.note ? 'opacity-70' : 'opacity-30'"
-            :placeholder="'Ajouter une note...'"
+            :placeholder="$t('project.addNote')"
             :value="jour.note ?? ''"
             @change="
               (e: Event) =>
@@ -104,9 +104,11 @@ const isToday = (dateString: string) => {
   return dateString === new Date().toDateString();
 };
 
+const { locale } = useI18n();
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("fr-FR", {
+  return date.toLocaleDateString(locale.value, {
     weekday: "short",
     day: "numeric",
     month: "short",

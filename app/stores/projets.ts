@@ -191,7 +191,7 @@ export const useProjets = defineStore("projets", () => {
     return true;
   }
 
-  function getStatsHebdo() {
+  function getStatsHebdo(locale: string = "fr-FR") {
     const today = new Date();
     const lundi = new Date(today);
     const jour = today.getDay();
@@ -208,7 +208,7 @@ export const useProjets = defineStore("projets", () => {
       const d = new Date(lundi);
       d.setDate(lundi.getDate() + i);
       const dateStr = d.toDateString();
-      const label = d.toLocaleDateString("fr-FR", {
+      const label = d.toLocaleDateString(locale, {
         weekday: "short",
         day: "numeric",
       });

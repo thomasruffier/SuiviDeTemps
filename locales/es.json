@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "Seguimiento de tiempo"
+  },
+  "header": {
+    "lastBillingDay": "Último día de facturación"
+  },
+  "params": {
+    "title": "Ajustes del día",
+    "startTime": "Hora de inicio",
+    "lunchPause": "Pausa almuerzo",
+    "alreadyEaten": "¿Ya has comido?",
+    "manualEntry": "Ajusto mi tiempo manualmente",
+    "summary": "Inicio {start} · Pausa {pause}"
+  },
+  "dashboard": {
+    "worked": "Trabajado",
+    "remaining": "Restante",
+    "overdue": "Excedido",
+    "estimatedEnd": "Fin estimado",
+    "activeProjects": "Proyectos activos",
+    "top": "Top"
+  },
+  "controls": {
+    "sortByDuration": "Por duración",
+    "sortByName": "Por nombre",
+    "hideArchived": "Ocultar archivados",
+    "showArchived": "Ver archivados",
+    "newProject": "Nuevo proyecto"
+  },
+  "project": {
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "rename": "Renombrar",
+    "delete": "Eliminar",
+    "notes": "Notas",
+    "history": "Historial",
+    "totalDuration": "Duración total",
+    "work": "Trabajar",
+    "inProgress": "En curso",
+    "today": "hoy",
+    "total": "Total",
+    "noteLabel": "Nota del día",
+    "notePrompt": "En qué he trabajado...",
+    "showHistory": "Ver historial",
+    "hideHistory": "Ocultar historial",
+    "historyTitle": "Historial — {name}",
+    "daysCount": "{count} día | {count} días",
+    "addNote": "Añadir una nota..."
+  },
+  "stats": {
+    "weekly": "Estadísticas semanales",
+    "currentWeek": "Semana actual",
+    "total": "Total",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
+  "actions": {
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "modals": {
+    "newProjectTitle": "Nuevo proyecto",
+    "projectName": "Nombre del proyecto",
+    "create": "Crear {name}",
+    "deleteProjectTitle": "Eliminar proyecto",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar {name} y todo su historial?",
+    "cancel": "Cancelar",
+    "confirmDelete": "Eliminar",
+    "renameProjectTitle": "Renombrar proyecto",
+    "newName": "Nuevo nombre",
+    "confirmRename": "Renombrar"
+  }
+}

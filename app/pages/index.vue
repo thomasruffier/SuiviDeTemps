@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-6 text-center">
       <SvgLogo class="mx-auto mb-3 w-14 opacity-80" />
-      <h1 class="text-2xl tracking-wide font-titre">Suivi de temps</h1>
+      <h1 class="text-2xl tracking-wide font-titre">{{ $t('app.title') }}</h1>
     </div>
 
     <!-- Dernier jour de facturation -->
@@ -18,7 +18,7 @@
         <UIcon
           name="lucide-calendar-clock"
           :class="isFacturationOverdue ? 'text-error' : 'opacity-40'" />
-        <span class="text-sm">Dernier jour de facturation</span>
+        <span class="text-sm">{{ $t('header.lastBillingDay') }}</span>
       </div>
       <UInput
         v-model="dernierJourFacturation"
@@ -36,11 +36,11 @@
       <button class="params-toggle" @click="paramsOuverts = !paramsOuverts">
         <div class="flex gap-2 items-center">
           <UIcon name="lucide-settings-2" class="text-sm opacity-50" />
-          <span class="text-sm">Paramètres du jour</span>
+          <span class="text-sm">{{ $t('params.title') }}</span>
         </div>
         <div class="flex gap-3 items-center">
           <span class="font-mono text-xs opacity-50">
-            Début {{ heureDebut }} · Pause {{ formatDuree(midiPause) }}
+            {{ $t('params.summary', { start: heureDebut, pause: formatDuree(midiPause) }) }}
           </span>
           <UIcon
             :name="paramsOuverts ? 'lucide-chevron-up' : 'lucide-chevron-down'"
@@ -51,7 +51,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <!-- Heure de début -->
           <div>
-            <label class="block mb-1 text-xs opacity-60">Heure de début</label>
+            <label class="block mb-1 text-xs opacity-60">{{ $t('params.startTime') }}</label>
             <USelect
               :items="heureDebutListe"
               v-model="heureDebut"
@@ -61,10 +61,10 @@
           <div>
             <div class="flex justify-between items-center mb-1">
               <label class="text-xs opacity-60"
-                >Pause midi : {{ formatDuree(midiPause) }}</label
+                >{{ $t('params.lunchPause') }} : {{ formatDuree(midiPause) }}</label
               >
               <label class="flex gap-2 items-center text-xs opacity-60">
-                J'ai déjà mangé ?
+                {{ $t('params.alreadyEaten') }}
                 <UCheckbox @click="jaiMangeClic = true" v-model="jaiMange" />
               </label>
             </div>
@@ -83,7 +83,7 @@
         <!-- Mode manuel -->
         <div class="flex justify-end mt-3">
           <URadioGroup
-            :items="[{ label: 'Je règle mon temps manuellement', value: '' }]"
+            :items="[{ label: $t('params.manualEntry'), value: '' }]"
             v-model="jetravaillesur" />
         </div>
       </div>
@@ -110,14 +110,14 @@
               ? 'lucide-arrow-down-a-z'
               : 'lucide-arrow-down-wide-narrow'
           "
-          :label="triParNom ? 'Par durée' : 'Par nom'"
+          :label="triParNom ? $t('controls.sortByDuration') : $t('controls.sortByName')"
           color="neutral"
           variant="subtle" />
         <UButton
           @click="afficherArchives = !afficherArchives"
           size="xs"
           :icon="afficherArchives ? 'lucide-eye-off' : 'lucide-archive'"
-          :label="afficherArchives ? 'Masquer archivés' : 'Voir archivés'"
+          :label="afficherArchives ? $t('controls.hideArchived') : $t('controls.showArchived')"
           color="neutral"
           variant="subtle" />
       </div>
@@ -125,7 +125,7 @@
         @click="modalNouveauProjet = true"
         size="xs"
         icon="lucide-plus"
-        label="Nouveau projet"
+        :label="$t('controls.newProject')"
         color="primary"
         variant="solid" />
     </div>
@@ -175,14 +175,14 @@
       <UButton
         @click="projetsStore.exportProjets()"
         icon="lucide-download"
-        label="Exporter"
+        :label="$t('actions.export')"
         size="xs"
         color="neutral"
         variant="subtle" />
       <UButton
         @click="fileInput?.click()"
         icon="lucide-upload"
-        label="Importer"
+        :label="$t('actions.import')"
         size="xs"
         color="neutral"
         variant="subtle" />
@@ -194,20 +194,20 @@
     </div>
 
     <!-- Modal Nouveau Projet -->
-    <UModal scrollable title="Nouveau projet" v-model:open="modalNouveauProjet">
+    <UModal scrollable :title="$t('modals.newProjectTitle')" v-model:open="modalNouveauProjet">
       <template #body>
-        <UFormField label="Nom du projet">
+        <UFormField :label="$t('modals.projectName')">
           <UInput
             class="w-full"
             v-model="projetNom"
-            placeholder="Nom du projet"
+            :placeholder="$t('modals.projectName')"
             @keyup.enter="createAndClose" />
         </UFormField>
       </template>
       <template #footer>
         <div class="flex justify-end w-full">
           <UButton
-            :label="`Créer ${projetNom}`"
+            :label="$t('modals.create', { name: projetNom })"
             color="primary"
             @click="createAndClose"
             variant="solid"
@@ -219,23 +219,22 @@
     <!-- Modal Supprimer Projet -->
     <UModal
       scrollable
-      title="Supprimer le projet"
+      :title="$t('modals.deleteProjectTitle')"
       v-model:open="modalSupprimerProjet">
       <template #body>
         <p class="text-sm">
-          Êtes-vous sûr de vouloir supprimer
-          <strong>{{ nomSupprimerProjet }}</strong> et tout son historique ?
+          {{ $t('modals.deleteConfirm', { name: nomSupprimerProjet }) }}
         </p>
       </template>
       <template #footer>
         <div class="flex gap-2 justify-end w-full">
           <UButton
-            label="Annuler"
+            :label="$t('modals.cancel')"
             color="neutral"
             variant="subtle"
             @click="modalSupprimerProjet = false" />
           <UButton
-            label="Supprimer"
+            :label="$t('modals.confirmDelete')"
             color="error"
             variant="solid"
             @click="deleteAndClose" />
@@ -246,21 +245,21 @@
     <!-- Modal Renommer Projet -->
     <UModal
       scrollable
-      title="Renommer le projet"
+      :title="$t('modals.renameProjectTitle')"
       v-model:open="modalRenommerProjet">
       <template #body>
-        <UFormField label="Nouveau nom">
+        <UFormField :label="$t('modals.newName')">
           <UInput
             class="w-full"
             v-model="nouveauNomProjet"
-            placeholder="Nouveau nom"
+            :placeholder="$t('modals.newName')"
             @keyup.enter="renameAndClose" />
         </UFormField>
       </template>
       <template #footer>
         <div class="flex justify-end w-full">
           <UButton
-            label="Renommer"
+            :label="$t('modals.confirmRename')"
             color="primary"
             @click="renameAndClose"
             variant="solid"

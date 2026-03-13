@@ -1,0 +1,80 @@
+{
+  "app": {
+    "title": "Time Tracker"
+  },
+  "header": {
+    "lastBillingDay": "Last billing day"
+  },
+  "params": {
+    "title": "Day settings",
+    "startTime": "Start time",
+    "lunchPause": "Lunch break",
+    "lunchBreak": "Lunch break",
+    "alreadyEaten": "Already eaten?",
+    "manualEntry": "I set my time manually",
+    "summary": "Start {start} · Break {pause}"
+  },
+  "dashboard": {
+    "worked": "Worked",
+    "remaining": "Remaining",
+    "overdue": "Overdue",
+    "estimatedEnd": "Estimated end",
+    "activeProjects": "Active projects",
+    "top": "Top"
+  },
+  "controls": {
+    "sortByDuration": "By duration",
+    "sortByName": "By name",
+    "hideArchived": "Hide archived",
+    "showArchived": "Show archived",
+    "newProject": "New project"
+  },
+  "project": {
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "rename": "Rename",
+    "delete": "Delete",
+    "notes": "Notes",
+    "history": "History",
+    "totalDuration": "Total duration",
+    "work": "Work",
+    "inProgress": "In progress",
+    "today": "today",
+    "total": "Total",
+    "noteLabel": "Day note",
+    "notePrompt": "What I worked on...",
+    "showHistory": "See history",
+    "hideHistory": "Hide history",
+    "historyTitle": "History — {name}",
+    "daysCount": "{count} day | {count} days",
+    "addNote": "Add a note..."
+  },
+  "stats": {
+    "weekly": "Weekly stats",
+    "currentWeek": "Current week",
+    "total": "Total",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "actions": {
+    "export": "Export",
+    "import": "Import"
+  },
+  "modals": {
+    "newProjectTitle": "New project",
+    "projectName": "Project name",
+    "create": "Create {name}",
+    "deleteProjectTitle": "Delete project",
+    "deleteConfirm": "Are you sure you want to delete {name} and all its history?",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete",
+    "renameProjectTitle": "Rename project",
+    "newName": "New name",
+    "confirmRename": "Rename"
+  }
+}

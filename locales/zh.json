@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "时间追踪器"
+  },
+  "header": {
+    "lastBillingDay": "最后计费日"
+  },
+  "params": {
+    "title": "今日设置",
+    "startTime": "开始时间",
+    "lunchPause": "午休",
+    "alreadyEaten": "已经吃过了？",
+    "manualEntry": "手动设置时间",
+    "summary": "开始 {start} · 休息 {pause}"
+  },
+  "dashboard": {
+    "worked": "已工作",
+    "remaining": "剩余",
+    "overdue": "延时",
+    "estimatedEnd": "预计结束",
+    "activeProjects": "活跃项目",
+    "top": "最高"
+  },
+  "controls": {
+    "sortByDuration": "按时长",
+    "sortByName": "按名称",
+    "hideArchived": "隐藏已归档",
+    "showArchived": "显示已归档",
+    "newProject": "新建项目"
+  },
+  "project": {
+    "archive": "归档",
+    "unarchive": "取消归档",
+    "rename": "重命名",
+    "delete": "删除",
+    "notes": "备注",
+    "history": "历史记录",
+    "totalDuration": "总时长",
+    "work": "工作",
+    "inProgress": "进行中",
+    "today": "今天",
+    "total": "总计",
+    "noteLabel": "今日备注",
+    "notePrompt": "我做了什么...",
+    "showHistory": "显示历史",
+    "hideHistory": "隐藏历史",
+    "historyTitle": "历史 — {name}",
+    "daysCount": "{count} 天 | {count} 天",
+    "addNote": "添加备注..."
+  },
+  "stats": {
+    "weekly": "每周统计",
+    "currentWeek": "本周",
+    "total": "总计",
+    "monday": "周一",
+    "tuesday": "周二",
+    "wednesday": "周三",
+    "thursday": "周四",
+    "friday": "周五",
+    "saturday": "周六",
+    "sunday": "周日"
+  },
+  "actions": {
+    "export": "导出",
+    "import": "导入"
+  },
+  "modals": {
+    "newProjectTitle": "新建项目",
+    "projectName": "项目名称",
+    "create": "创建 {name}",
+    "deleteProjectTitle": "删除项目",
+    "deleteConfirm": "您确定要删除 {name} 及其所有历史记录吗？",
+    "cancel": "取消",
+    "confirmDelete": "删除",
+    "renameProjectTitle": "重命名项目",
+    "newName": "新名称",
+    "confirmRename": "重命名"
+  }
+}

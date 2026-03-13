@@ -9,7 +9,30 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@vueuse/nuxt",
     "@nuxt/scripts",
+    "@nuxtjs/i18n",
   ],
+  i18n: {
+    locales: [
+      { code: "fr", language: "fr-FR", file: "fr.json", name: "Français" },
+      { code: "en", language: "en-US", file: "en.json", name: "English" },
+      { code: "it", language: "it-IT", file: "it.json", name: "Italiano" },
+      { code: "es", language: "es-ES", file: "es.json", name: "Español" },
+      { code: "de", language: "de-DE", file: "de.json", name: "Deutsch" },
+      { code: "zh", language: "zh-CN", file: "zh.json", name: "中文" },
+      { code: "da", language: "da-DK", file: "da.json", name: "Dansk" },
+      { code: "ar", language: "ar-EG", file: "ar.json", name: "العربية", dir: "rtl" },
+    ],
+    defaultLocale: "fr",
+    lazy: true,
+    langDir: "../locales",
+    strategy: "no_prefix",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      alwaysRedirect: true,
+      fallbackLocale: "fr",
+    },
+  },
   css: ["~/assets/css/main.css"],
   app: {
     head: {

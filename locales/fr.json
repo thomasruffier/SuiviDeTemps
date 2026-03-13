@@ -1,0 +1,80 @@
+{
+  "app": {
+    "title": "Suivi de temps"
+  },
+  "header": {
+    "lastBillingDay": "Dernier jour de facturation"
+  },
+  "params": {
+    "title": "Paramètres du jour",
+    "startTime": "Heure de début",
+    "lunchPause": "Pause déjeuner",
+    "lunchBreak": "Pause midi",
+    "alreadyEaten": "Déjà mangé ?",
+    "manualEntry": "Je règle mon temps manuellement",
+    "summary": "Début {start} · Pause {pause}"
+  },
+  "dashboard": {
+    "worked": "Travaillé",
+    "remaining": "Restant",
+    "overdue": "Dépassé",
+    "estimatedEnd": "Fin estimée",
+    "activeProjects": "Projets actifs",
+    "top": "Top"
+  },
+  "controls": {
+    "sortByDuration": "Par durée",
+    "sortByName": "Par nom",
+    "hideArchived": "Masquer archivés",
+    "showArchived": "Voir archivés",
+    "newProject": "Nouveau projet"
+  },
+  "project": {
+    "archive": "Archiver",
+    "unarchive": "Désarchiver",
+    "rename": "Renommer",
+    "delete": "Supprimer",
+    "notes": "Notes",
+    "history": "Historique",
+    "totalDuration": "Durée totale",
+    "work": "Travailler",
+    "inProgress": "En cours",
+    "today": "aujourd'hui",
+    "total": "Total",
+    "noteLabel": "Note du jour",
+    "notePrompt": "Sur quoi j'ai travaillé...",
+    "showHistory": "Voir l'historique",
+    "hideHistory": "Masquer l'historique",
+    "historyTitle": "Historique — {name}",
+    "daysCount": "{count} jour | {count} jours",
+    "addNote": "Ajouter une note..."
+  },
+  "stats": {
+    "weekly": "Stats hebdomadaires",
+    "currentWeek": "Semaine en cours",
+    "total": "Total",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
+  },
+  "actions": {
+    "export": "Exporter",
+    "import": "Importer"
+  },
+  "modals": {
+    "newProjectTitle": "Nouveau projet",
+    "projectName": "Nom du projet",
+    "create": "Créer {name}",
+    "deleteProjectTitle": "Supprimer le projet",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {name} et tout son historique ?",
+    "cancel": "Annuler",
+    "confirmDelete": "Supprimer",
+    "renameProjectTitle": "Renommer le projet",
+    "newName": "Nouveau nom",
+    "confirmRename": "Renommer"
+  }
+}

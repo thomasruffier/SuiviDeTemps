@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "Tidsregistrering"
+  },
+  "header": {
+    "lastBillingDay": "Sidste faktureringsdag"
+  },
+  "params": {
+    "title": "Dagens indstillinger",
+    "startTime": "Starttidspunkt",
+    "lunchPause": "Frokostpause",
+    "alreadyEaten": "Har du allerede spist?",
+    "manualEntry": "Jeg indstiller min tid manuelt",
+    "summary": "Start {start} · Pause {pause}"
+  },
+  "dashboard": {
+    "worked": "Arbejdet",
+    "remaining": "Resterende",
+    "overdue": "Overskredet",
+    "estimatedEnd": "Forventet slut",
+    "activeProjects": "Aktive projekter",
+    "top": "Top"
+  },
+  "controls": {
+    "sortByDuration": "Efter varighed",
+    "sortByName": "Efter navn",
+    "hideArchived": "Skjul arkiverede",
+    "showArchived": "Vis arkiverede",
+    "newProject": "Nyt projekt"
+  },
+  "project": {
+    "archive": "Arkiver",
+    "unarchive": "Gendan",
+    "rename": "Omdøb",
+    "delete": "Slet",
+    "notes": "Noter",
+    "history": "Historik",
+    "totalDuration": "Samlet varighed",
+    "work": "Arbejd",
+    "inProgress": "I gang",
+    "today": "i dag",
+    "total": "Total",
+    "noteLabel": "Dagens note",
+    "notePrompt": "Hvad jeg har arbejdet på...",
+    "showHistory": "Vis historik",
+    "hideHistory": "Skjul historik",
+    "historyTitle": "Historik — {name}",
+    "daysCount": "{count} dag | {count} dage",
+    "addNote": "Tilføj en note..."
+  },
+  "stats": {
+    "weekly": "Ugentlig statistik",
+    "currentWeek": "Denne uge",
+    "total": "Total",
+    "monday": "Mandag",
+    "tuesday": "Tirsdag",
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lørdag",
+    "sunday": "Søndag"
+  },
+  "actions": {
+    "export": "Eksporter",
+    "import": "Importer"
+  },
+  "modals": {
+    "newProjectTitle": "Nyt projekt",
+    "projectName": "Projektnavn",
+    "create": "Opret {name}",
+    "deleteProjectTitle": "Slet projekt",
+    "deleteConfirm": "Er du sikker på, at du vil slette {name} og hele historikken?",
+    "cancel": "Annuller",
+    "confirmDelete": "Slet",
+    "renameProjectTitle": "Omdøb projekt",
+    "newName": "Nyt navn",
+    "confirmRename": "Omdøb"
+  }
+}

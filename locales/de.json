@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "Zeiterfassung"
+  },
+  "header": {
+    "lastBillingDay": "Letzter Abrechnungstag"
+  },
+  "params": {
+    "title": "Tageseinstellungen",
+    "startTime": "Startzeit",
+    "lunchPause": "Mittagspause",
+    "alreadyEaten": "Bereits gegessen?",
+    "manualEntry": "Ich stelle meine Zeit manuell ein",
+    "summary": "Start {start} · Pause {pause}"
+  },
+  "dashboard": {
+    "worked": "Gearbeitet",
+    "remaining": "Verbleibend",
+    "overdue": "Überfällig",
+    "estimatedEnd": "Voraussichtliches Ende",
+    "activeProjects": "Aktive Projekte",
+    "top": "Top"
+  },
+  "controls": {
+    "sortByDuration": "Nach Dauer",
+    "sortByName": "Nach Namen",
+    "hideArchived": "Archivierte ausblenden",
+    "showArchived": "Archivierte anzeigen",
+    "newProject": "Neues Projekt"
+  },
+  "project": {
+    "archive": "Archivieren",
+    "unarchive": "Dearchivieren",
+    "rename": "Umbenennen",
+    "delete": "Löschen",
+    "notes": "Notizen",
+    "history": "Verlauf",
+    "totalDuration": "Gesamtdauer",
+    "work": "Arbeiten",
+    "inProgress": "In Arbeit",
+    "today": "heute",
+    "total": "Gesamt",
+    "noteLabel": "Tagesnotiz",
+    "notePrompt": "Woran ich gearbeitet habe...",
+    "showHistory": "Verlauf anzeigen",
+    "hideHistory": "Verlauf ausblenden",
+    "historyTitle": "Verlauf — {name}",
+    "daysCount": "{count} Tag | {count} Tage",
+    "addNote": "Notiz hinzufügen..."
+  },
+  "stats": {
+    "weekly": "Wochenstatistik",
+    "currentWeek": "Aktuelle Woche",
+    "total": "Gesamt",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag"
+  },
+  "actions": {
+    "export": "Exportieren",
+    "import": "Importieren"
+  },
+  "modals": {
+    "newProjectTitle": "Neues Projekt",
+    "projectName": "Projektname",
+    "create": "{name} erstellen",
+    "deleteProjectTitle": "Projekt löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie {name} und den gesamten Verlauf löschen möchten?",
+    "cancel": "Abbrechen",
+    "confirmDelete": "Löschen",
+    "renameProjectTitle": "Projekt umbenennen",
+    "newName": "Neuer Name",
+    "confirmRename": "Umbenennen"
+  }
+}

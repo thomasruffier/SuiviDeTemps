@@ -9,7 +9,7 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            Travaillé
+            {{ $t('dashboard.worked') }}
           </div>
           <div class="font-mono text-xl font-bold tabular-nums">
             {{ formatDuree(sommeDurees) }}
@@ -34,7 +34,7 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            {{ tempsADepenser >= 0 ? "Restant" : "Dépassé" }}
+            {{ tempsADepenser >= 0 ? $t('dashboard.remaining') : $t('dashboard.overdue') }}
           </div>
           <div
             class="font-mono text-xl font-bold tabular-nums"
@@ -54,13 +54,13 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            Fin estimée
+            {{ $t('dashboard.estimatedEnd') }}
           </div>
           <div
             :class="tempsADepenser < 0 ? 'text-red-500' : ''"
             class="font-mono text-xl font-bold tabular-nums">
             {{
-              heureDeFin.toLocaleTimeString("fr-FR", {
+              heureDeFin.toLocaleTimeString($i18n.locale, {
                 hour: "2-digit",
                 minute: "2-digit",
               })
@@ -77,7 +77,7 @@
       </div>
       <div>
         <div class="text-xs tracking-wide uppercase opacity-60">
-          Projets actifs
+          {{ $t('dashboard.activeProjects') }}
         </div>
         <div class="text-xl font-bold">{{ nbProjetsActifs }}</div>
       </div>
@@ -88,12 +88,12 @@
       <div class="flex justify-between mb-1.5 text-xs opacity-60">
         <span>{{ heureDebut }}</span>
         <span v-if="topProjet">
-          Top : <strong class="text-primary">{{ topProjet.nom }}</strong> ({{
+          {{ $t('dashboard.top') }} : <strong class="text-primary">{{ topProjet.nom }}</strong> ({{
             formatDuree(topProjet.duree)
           }})
         </span>
         <span>{{
-          heureDeFin.toLocaleTimeString("fr-FR", {
+          heureDeFin.toLocaleTimeString($i18n.locale, {
             hour: "2-digit",
             minute: "2-digit",
           })
@@ -110,7 +110,7 @@
           v-if="pausePourcent > 0"
           class="opacity-40 transition-all duration-500 progress-segment"
           :style="{ width: pausePourcent + '%', backgroundColor: '#9ca3af' }"
-          title="Pause midi"></div>
+          :title="$t('params.lunchBreak')"></div>
       </div>
     </div>
   </div>
@@ -118,6 +118,8 @@
 
 <script setup lang="ts">
 import type { Projet } from "~/types/Types";
+
+const { d } = useI18n();
 
 const props = defineProps<{
   projets: Projet[];
@@ -145,7 +147,7 @@ const nbProjetsActifs = computed(
     ).length,
 );
 
-const topProjet = computed(() => {
+const topProjet = computed <{ nom: string; duree: number } | null>(() => {
   let best: { nom: string; duree: number } | null = null;
   props.projets.forEach((p) => {
     const d = p.durees.find((d) => d.date === today);
