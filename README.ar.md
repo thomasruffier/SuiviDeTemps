@@ -2,7 +2,7 @@
 
 **تتبع الوقت** هو تطبيق بسيط مصمم لتتبع ساعات عملك بطريقة سهلة وتحترم الخصوصية. يتيح لك عرض نشاطك اليومي والأسبوعي والشهري دون أي تعقيدات.
 
-🚀 **عرض مباشر**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **عرض مباشر**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 المزايا
 

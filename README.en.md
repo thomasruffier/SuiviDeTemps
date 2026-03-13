@@ -2,7 +2,7 @@
 
 **Time Tracker** is a minimalist application designed to track your working hours in a simple and privacy-respecting way. It allows you to visualize your daily, weekly, and monthly activity without any friction.
 
-🚀 **Online Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **Online Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 Benefits
 

@@ -4,7 +4,7 @@
 
 **Suivi de Temps** est une application minimaliste conçue pour traquer vos heures de travail de manière simple et respectueuse de votre vie privée. Elle vous permet de visualiser votre activité quotidienne, hebdomadaire et mensuelle sans aucune friction.
 
-🚀 **Démo en ligne** : [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **Démo en ligne** : [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 Avantages
 

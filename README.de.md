@@ -2,7 +2,7 @@
 
 **Zeiterfassung** ist eine minimalistische Anwendung, die entwickelt wurde, um Ihre Arbeitsstunden auf einfache und datenschutzfreundliche Weise zu erfassen. Sie ermöglicht es Ihnen, Ihre täglichen, wöchentlichen und monatlichen Aktivitäten ohne Reibungsverluste zu visualisieren.
 
-🚀 **Online-Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **Online-Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 Vorteile
 

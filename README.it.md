@@ -2,7 +2,7 @@
 
 **Monitoraggio del Tempo** è un'applicazione minimalista progettata per tracciare le ore di lavoro in modo semplice e rispettoso della privacy. Ti consente di visualizzare la tua attività quotidiana, settimanale e mensile senza alcuna frizione.
 
-🚀 **Demo Online**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **Demo Online**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 Vantaggi
 

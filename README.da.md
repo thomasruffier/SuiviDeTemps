@@ -2,7 +2,7 @@
 
 **Tidsregistrering** er en minimalistisk applikation designet til at spore dine arbejdstimer på en enkel og privatlivs-respekterende måde. Den giver dig mulighed for at visualisere din daglige, ugentlige og månedlige aktivitet uden friktion.
 
-🚀 **Online Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+🚀 **Online Demo**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
 
 ## 🌟 Fordele
 
