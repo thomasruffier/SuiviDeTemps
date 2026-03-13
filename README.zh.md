@@ -2,7 +2,7 @@
 
 **时间追踪**是一款极简的应用，旨在以简单且尊重隐私的方式追踪您的工作时间。它让您可以毫无障碍地查看每日、每周和每月的活动。
 
-🚀 **在线演示**: [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.vercel.app)
+🚀 **在线演示**: [suivi-de-temps.vercel.app ](https://suivi-de-temps.vercel.app)
 
 ## 🌟 优势
 
