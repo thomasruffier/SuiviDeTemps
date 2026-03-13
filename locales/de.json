@@ -9,7 +9,8 @@
     "title": "Tageseinstellungen",
     "startTime": "Startzeit",
     "lunchPause": "Mittagspause",
-    "alreadyEaten": "Bereits gegessen?",
+    "lunchBreak": "Mittagspause",
+    "alreadyEaten": "Bereits gegessen",
     "manualEntry": "Ich stelle meine Zeit manuell ein",
     "summary": "Start {start} · Pause {pause}"
   },

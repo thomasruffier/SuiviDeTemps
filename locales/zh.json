@@ -9,6 +9,7 @@
     "title": "今日设置",
     "startTime": "开始时间",
     "lunchPause": "午休",
+    "lunchBreak": "午休",
     "alreadyEaten": "已经吃过了？",
     "manualEntry": "手动设置时间",
     "summary": "开始 {start} · 休息 {pause}"

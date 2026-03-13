@@ -9,7 +9,8 @@
     "title": "إعدادات اليوم",
     "startTime": "وقت البدء",
     "lunchPause": "استراحة الغداء",
-    "alreadyEaten": "هل أكلت بالفعل؟",
+    "lunchBreak": "استراحة الغداء",
+    "alreadyEaten": "تم الأكل بالفعل",
     "manualEntry": "أقوم بضبط وقتي يدويًا",
     "summary": "البدء {start} · الاستراحة {pause}"
   },

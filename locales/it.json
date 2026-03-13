@@ -9,7 +9,8 @@
     "title": "Impostazioni del giorno",
     "startTime": "Ora di inizio",
     "lunchPause": "Pausa pranzo",
-    "alreadyEaten": "Hai già mangiato?",
+    "lunchBreak": "Pausa pranzo",
+    "alreadyEaten": "Già mangiato",
     "manualEntry": "Imposto il mio tempo manualmente",
     "summary": "Inizio {start} · Pausa {pause}"
   },

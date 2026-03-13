@@ -9,7 +9,8 @@
     "title": "Dagens indstillinger",
     "startTime": "Starttidspunkt",
     "lunchPause": "Frokostpause",
-    "alreadyEaten": "Har du allerede spist?",
+    "lunchBreak": "Frokostpause",
+    "alreadyEaten": "Allerede spist",
     "manualEntry": "Jeg indstiller min tid manuelt",
     "summary": "Start {start} · Pause {pause}"
   },

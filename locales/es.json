@@ -9,7 +9,8 @@
     "title": "Ajustes del día",
     "startTime": "Hora de inicio",
     "lunchPause": "Pausa almuerzo",
-    "alreadyEaten": "¿Ya has comido?",
+    "lunchBreak": "Pausa almuerzo",
+    "alreadyEaten": "Ya comido",
     "manualEntry": "Ajusto mi tiempo manualmente",
     "summary": "Inicio {start} · Pausa {pause}"
   },
