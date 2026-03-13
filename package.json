@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@nuxt/image": "1.11.0",
     "@nuxt/scripts": "0.13.0",

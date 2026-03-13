@@ -1,75 +1,63 @@
-# Nuxt Minimal Starter
+# Suivi de Temps 🕒
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+[English](README.en.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [Italiano](README.it.md) | [Dansk](README.da.md) | [中文](README.zh.md) | [العربية](README.ar.md)
 
-## Setup
+**Suivi de Temps** est une application minimaliste conçue pour traquer vos heures de travail de manière simple et respectueuse de votre vie privée. Elle vous permet de visualiser votre activité quotidienne, hebdomadaire et mensuelle sans aucune friction.
 
-Make sure to install dependencies:
+🚀 **Démo en ligne** : [suivi-de-temps.lapierrequimousse.com](https://suivi-de-temps.lapierrequimousse.com/)
+
+## 🌟 Avantages
+
+- **Open Source** : Le code est transparent et accessible à tous.
+- **Pas de compte** : Aucune inscription requise.
+- **Données locales** : Toutes vos données restent sur votre ordinateur (stockées localement dans votre navigateur).
+- **Self-hostable** : Installez-le sur votre propre infrastructure très facilement.
+- **Multilingue** : Disponible dans plusieurs langues.
+
+## 🚀 Installation rapide
+
+### Prérequis
+
+- Node.js (version 18 ou supérieure recommandée)
+- pnpm (recommandé) ou npm / yarn
+
+### Installation des dépendances
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+### Lancer en mode développement
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+L'application sera accessible sur `http://localhost:3000`.
 
-Build the application for production:
+## 📦 Production & Déploiement
+
+### Build standard (Node.js)
+
+Pour construire l'application pour un environnement Node.js :
 
 ```bash
-# npm
-npm run build
-
-# pnpm
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+### Génération Statique (SSG)
+
+Pour générer une version statique de l'application :
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+pnpm generate
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+**Pourquoi utiliser la génération statique ?**
+
+- **Simplicité d'hébergement** : Les fichiers générés dans le dossier `.output/public` peuvent être hébergés sur n'importe quel hébergeur.
+- **Performance** : Les pages sont pré-rendues, ce qui permet un chargement quasi instantané.
+
+## 📄 Licence
+
+Ce projet est sous licence **GNU General Public License v3.0**. Consultez le fichier [LICENSE](LICENSE) pour plus de détails.
