@@ -4,7 +4,6 @@
     <div class="mb-6 text-center">
       <SvgLogo class="mx-auto mb-3 w-14 opacity-80" />
       <h1 class="text-2xl tracking-wide font-titre">Suivi de temps</h1>
-      <p class="mt-1 text-xs opacity-40">La Pierre qui Mousse</p>
     </div>
 
     <!-- Dernier jour de facturation -->
@@ -478,9 +477,28 @@ watch(tempsADepenser, async (nouv, anc) => {
     if (projet) {
       const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nom);
       if (dureeTotaleProjet) {
-        dureeTotaleProjet.duree = nouv;
+        dureeTotaleProjet.duree += nouv;
       } else {
         dureesTotales.value.push({ nom, duree: nouv });
+      }
+    }
+  }
+});
+
+watch(jetravaillesur, async (nouv) => {
+  if (!nouv) return;
+
+  const currentTempsADepenser = tempsADepenser.value;
+  if (currentTempsADepenser > 0) {
+    await projetsStore.incrementDuree(nouv, new Date(), currentTempsADepenser);
+
+    const projet = projets.value.find((p) => p.nom === nouv);
+    if (projet) {
+      const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nouv);
+      if (dureeTotaleProjet) {
+        dureeTotaleProjet.duree += currentTempsADepenser;
+      } else {
+        dureesTotales.value.push({ nom: nouv, duree: currentTempsADepenser });
       }
     }
   }

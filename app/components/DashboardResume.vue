@@ -1,17 +1,17 @@
 <template>
   <div class="dashboard-resume">
     <!-- Stats rapides -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+    <div class="grid grid-cols-2 gap-3 mb-4 sm:grid-cols-4">
       <!-- Temps travaillé -->
       <div class="stat-card">
-        <div class="stat-icon bg-indigo-500/15 text-indigo-500">
+        <div class="text-indigo-500 stat-icon bg-indigo-500/15">
           <UIcon name="lucide-clock" class="text-lg" />
         </div>
         <div>
-          <div class="text-xs opacity-60 uppercase tracking-wide">
+          <div class="text-xs tracking-wide uppercase opacity-60">
             Travaillé
           </div>
-          <div class="text-xl font-bold tabular-nums font-mono">
+          <div class="font-mono text-xl font-bold tabular-nums">
             {{ formatDuree(sommeDurees) }}
           </div>
         </div>
@@ -33,40 +33,32 @@
             class="text-lg" />
         </div>
         <div>
-          <div class="text-xs opacity-60 uppercase tracking-wide">
+          <div class="text-xs tracking-wide uppercase opacity-60">
             {{ tempsADepenser >= 0 ? "Restant" : "Dépassé" }}
           </div>
           <div
-            class="text-xl font-bold tabular-nums font-mono"
+            class="font-mono text-xl font-bold tabular-nums"
             :class="tempsADepenser < 0 ? 'text-red-500' : ''">
             {{ formatDuree(Math.abs(tempsADepenser)) }}
           </div>
         </div>
       </div>
 
-      <!-- Projets actifs -->
-      <div class="stat-card">
-        <div class="stat-icon bg-amber-500/15 text-amber-500">
-          <UIcon name="lucide-folder-open" class="text-lg" />
-        </div>
-        <div>
-          <div class="text-xs opacity-60 uppercase tracking-wide">
-            Projets actifs
-          </div>
-          <div class="text-xl font-bold">{{ nbProjetsActifs }}</div>
-        </div>
-      </div>
-
       <!-- Fin estimée -->
       <div class="stat-card">
-        <div class="stat-icon bg-purple-500/15 text-purple-500">
-          <UIcon name="lucide-log-out" class="text-lg" />
+        <div class="stat-icon bg-purple-500/15">
+          <UIcon
+            :class="tempsADepenser >= 0 ? ' text-purple-500' : ' text-red-500'"
+            name="lucide-log-out"
+            class="text-lg" />
         </div>
         <div>
-          <div class="text-xs opacity-60 uppercase tracking-wide">
+          <div class="text-xs tracking-wide uppercase opacity-60">
             Fin estimée
           </div>
-          <div class="text-xl font-bold tabular-nums font-mono">
+          <div
+            :class="tempsADepenser < 0 ? 'text-red-500' : ''"
+            class="font-mono text-xl font-bold tabular-nums">
             {{
               heureDeFin.toLocaleTimeString("fr-FR", {
                 hour: "2-digit",
@@ -78,9 +70,22 @@
       </div>
     </div>
 
+    <!-- Projets actifs -->
+    <div class="stat-card">
+      <div class="text-amber-500 stat-icon bg-amber-500/15">
+        <UIcon name="lucide-folder-open" class="text-lg" />
+      </div>
+      <div>
+        <div class="text-xs tracking-wide uppercase opacity-60">
+          Projets actifs
+        </div>
+        <div class="text-xl font-bold">{{ nbProjetsActifs }}</div>
+      </div>
+    </div>
+
     <!-- Barre de progression de la journée -->
     <div class="progress-bar-container">
-      <div class="flex justify-between text-xs opacity-60 mb-1.5">
+      <div class="flex justify-between mb-1.5 text-xs opacity-60">
         <span>{{ heureDebut }}</span>
         <span v-if="topProjet">
           Top : <strong class="text-primary">{{ topProjet.nom }}</strong> ({{
@@ -98,12 +103,12 @@
         <div
           v-for="seg in segments"
           :key="seg.nom"
-          class="progress-segment transition-all duration-500"
+          class="transition-all duration-500 progress-segment"
           :style="{ width: seg.pourcent + '%', backgroundColor: seg.couleur }"
           :title="`${seg.nom}: ${formatDuree(seg.duree)}`"></div>
         <div
           v-if="pausePourcent > 0"
-          class="progress-segment transition-all duration-500 opacity-40"
+          class="opacity-40 transition-all duration-500 progress-segment"
           :style="{ width: pausePourcent + '%', backgroundColor: '#9ca3af' }"
           title="Pause midi"></div>
       </div>
