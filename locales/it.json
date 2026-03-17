@@ -51,15 +51,21 @@
   },
   "stats": {
     "weekly": "Statistiche settimanali",
+    "monthly": "Statistiche mensili",
     "currentWeek": "Settimana corrente",
+    "currentMonth": "Mese corrente",
     "total": "Totale",
+    "week": "Settimana",
+    "month": "Mese",
+    "previous": "Precedente",
+    "next": "Successivo",
     "monday": "Lunedì",
     "tuesday": "Martedì",
     "wednesday": "Mercoledì",
-    "thursday": "Giovedì",
-    "friday": "Venerdì",
-    "saturday": "Sabato",
-    "sunday": "Domenica"
+    "giovedì": "Giovedì",
+    "venerdì": "Venerdì",
+    "sabato": "Sabato",
+    "domenica": "Domenica"
   },
   "actions": {
     "export": "Esporta",

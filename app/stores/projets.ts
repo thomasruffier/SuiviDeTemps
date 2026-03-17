@@ -191,12 +191,20 @@ export const useProjets = defineStore("projets", () => {
     return true;
   }
 
-  function getStatsHebdo(locale: string = "fr-FR") {
-    const today = new Date();
-    const lundi = new Date(today);
-    const jour = today.getDay();
-    lundi.setDate(today.getDate() - (jour === 0 ? 6 : jour - 1));
-    lundi.setHours(0, 0, 0, 0);
+  function getStats(
+    date: Date = new Date(),
+    mode: "week" | "month" = "week",
+    locale: string = "fr-FR",
+  ) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+
+    if (mode === "week") {
+      const jour = start.getDay();
+      start.setDate(start.getDate() - (jour === 0 ? 6 : jour - 1));
+    } else {
+      start.setDate(1);
+    }
 
     const jours: {
       date: string;
@@ -204,13 +212,19 @@ export const useProjets = defineStore("projets", () => {
       projets: { nom: string; duree: number; couleur: string; note: string }[];
     }[] = [];
 
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(lundi);
-      d.setDate(lundi.getDate() + i);
+    const iterations =
+      mode === "week"
+        ? 7
+        : new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
+
+    for (let i = 0; i < iterations; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       const dateStr = d.toDateString();
       const label = d.toLocaleDateString(locale, {
-        weekday: "short",
+        weekday: mode === "week" ? "short" : undefined,
         day: "numeric",
+        month: mode === "month" ? "short" : undefined,
       });
 
       const projetsDuJour: {
@@ -254,7 +268,7 @@ export const useProjets = defineStore("projets", () => {
     updateNote,
     updateDescription,
     updateCouleur,
-    getStatsHebdo,
+    getStats,
     deleteJourFromProjet: async function deleteJourFromProjet(
       nom: string,
       date: string,

@@ -9,7 +9,7 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            {{ $t('dashboard.worked') }}
+            {{ $t("dashboard.worked") }}
           </div>
           <div class="font-mono text-xl font-bold tabular-nums">
             {{ formatDuree(sommeDurees) }}
@@ -34,7 +34,11 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            {{ tempsADepenser >= 0 ? $t('dashboard.remaining') : $t('dashboard.overdue') }}
+            {{
+              tempsADepenser >= 0
+                ? $t("dashboard.remaining")
+                : $t("dashboard.overdue")
+            }}
           </div>
           <div
             class="font-mono text-xl font-bold tabular-nums"
@@ -54,7 +58,7 @@
         </div>
         <div>
           <div class="text-xs tracking-wide uppercase opacity-60">
-            {{ $t('dashboard.estimatedEnd') }}
+            {{ $t("dashboard.estimatedEnd") }}
           </div>
           <div
             :class="tempsADepenser < 0 ? 'text-red-500' : ''"
@@ -68,27 +72,28 @@
           </div>
         </div>
       </div>
+      <div class="stat-card">
+        <div class="text-amber-500 stat-icon bg-amber-500/15">
+          <UIcon name="lucide-folder-open" class="text-lg" />
+        </div>
+        <div>
+          <div class="text-xs tracking-wide uppercase opacity-60">
+            {{ $t("dashboard.activeProjects") }}
+          </div>
+          <div class="text-xl font-bold">{{ nbProjetsActifs }}</div>
+        </div>
+      </div>
     </div>
 
     <!-- Projets actifs -->
-    <div class="stat-card">
-      <div class="text-amber-500 stat-icon bg-amber-500/15">
-        <UIcon name="lucide-folder-open" class="text-lg" />
-      </div>
-      <div>
-        <div class="text-xs tracking-wide uppercase opacity-60">
-          {{ $t('dashboard.activeProjects') }}
-        </div>
-        <div class="text-xl font-bold">{{ nbProjetsActifs }}</div>
-      </div>
-    </div>
 
     <!-- Barre de progression de la journée -->
     <div class="progress-bar-container">
       <div class="flex justify-between mb-1.5 text-xs opacity-60">
         <span>{{ heureDebut }}</span>
         <span v-if="topProjet">
-          {{ $t('dashboard.top') }} : <strong class="text-primary">{{ topProjet.nom }}</strong> ({{
+          {{ $t("dashboard.top") }} :
+          <strong class="text-primary">{{ topProjet.nom }}</strong> ({{
             formatDuree(topProjet.duree)
           }})
         </span>
@@ -147,7 +152,7 @@ const nbProjetsActifs = computed(
     ).length,
 );
 
-const topProjet = computed <{ nom: string; duree: number } | null>(() => {
+const topProjet = computed<{ nom: string; duree: number } | null>(() => {
   let best: { nom: string; duree: number } | null = null;
   props.projets.forEach((p) => {
     const d = p.durees.find((d) => d.date === today);
