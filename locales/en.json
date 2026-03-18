@@ -23,8 +23,9 @@
     "top": "Top"
   },
   "controls": {
-    "sortByDuration": "By duration",
-    "sortByName": "By name",
+    "sortByDuration": "Duration",
+    "sortByName": "Name",
+    "sortByManual": "Manual",
     "hideArchived": "Hide archived",
     "showArchived": "Show archived",
     "newProject": "New project"

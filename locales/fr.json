@@ -23,8 +23,9 @@
     "top": "Top"
   },
   "controls": {
-    "sortByDuration": "Par durée",
-    "sortByName": "Par nom",
+    "sortByDuration": "Durée",
+    "sortByName": "Nom",
+    "sortByManual": "Manuel",
     "hideArchived": "Masquer archivés",
     "showArchived": "Voir archivés",
     "newProject": "Nouveau projet"

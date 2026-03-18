@@ -23,8 +23,9 @@
     "top": "الأعلى"
   },
   "controls": {
-    "sortByDuration": "حسب المدة",
-    "sortByName": "حسب الاسم",
+    "sortByDuration": "المدة",
+    "sortByName": "الاسم",
+    "sortByManual": "يدوي",
     "hideArchived": "إخفاء المؤرشفة",
     "showArchived": "عرض المؤرشفة",
     "newProject": "مشروع جديد"

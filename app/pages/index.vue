@@ -106,11 +106,19 @@
           @click="toggleTri"
           size="xs"
           :icon="
-            triParNom
+            triMode === 'name'
               ? 'lucide-arrow-down-a-z'
-              : 'lucide-arrow-down-wide-narrow'
+              : triMode === 'duration'
+                ? 'lucide-arrow-down-wide-narrow'
+                : 'lucide-grip-vertical'
           "
-          :label="triParNom ? $t('controls.sortByDuration') : $t('controls.sortByName')"
+          :label="
+            triMode === 'name'
+              ? $t('controls.sortByName')
+              : triMode === 'duration'
+                ? $t('controls.sortByDuration')
+                : $t('controls.sortByManual')
+          "
           color="neutral"
           variant="subtle" />
         <UButton
@@ -131,13 +139,14 @@
     </div>
 
     <!-- Grille des projets -->
-    <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2">
+    <div ref="gridEl" class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2">
       <ProjetCard
         v-for="e in projetsComp"
         :key="e.nom"
         :projet="e"
         :duree-totale="getDureeTotale(e.nom)"
         :is-active="jetravaillesur === e.nom"
+        :can-drag="triMode === 'manual'"
         :slider-visible="!!sliderVisible[e.nom]"
         @select="(nom: string) => (jetravaillesur = nom)"
         @update-duree="(duree: number) => setDureeTotale(e.nom, duree)"
@@ -273,15 +282,19 @@
 </template>
 
 <script setup lang="ts">
+import { useSortable } from "@vueuse/integrations/useSortable";
+
 const projetsStore = useProjets();
 projetsStore.fetchProjets();
 
-const triParNom = ref(true);
+const triMode = ref<"name" | "duration" | "manual">("manual");
 const afficherArchives = ref(false);
 const paramsOuverts = ref(false);
 
 function toggleTri() {
-  triParNom.value = !triParNom.value;
+  if (triMode.value === "manual") triMode.value = "name";
+  else if (triMode.value === "name") triMode.value = "duration";
+  else triMode.value = "manual";
 }
 
 const modalNouveauProjet = ref(false);
@@ -307,7 +320,24 @@ const isFacturationOverdue = computed(() => {
 });
 
 const fileInput = ref<HTMLInputElement | null>(null);
+const gridEl = ref<HTMLElement | null>(null);
 const sliderVisible = ref<Record<string, boolean>>({});
+
+const { option } = useSortable(gridEl, projetsStore.projets, {
+  animation: 150,
+  handle: ".drag-handle",
+  onUpdate: () => {
+    projetsStore.saveProjets();
+  },
+});
+
+watch(
+  triMode,
+  (val) => {
+    option("disabled", val !== "manual");
+  },
+  { immediate: true },
+);
 
 interface DureesTotale {
   nom: string;
@@ -406,13 +436,13 @@ function handleFileImport(event: Event) {
 
 const projets: Ref<Projet[]> = computed(() => projetsStore.projets);
 const projetsComp = computed(() => {
-  let filtered = projets.value;
+  let filtered = [...projets.value];
   if (!afficherArchives.value) {
     filtered = filtered.filter((p) => !p.isArchived);
   }
-  if (triParNom.value) {
+  if (triMode.value === "name") {
     return filtered.sort((a, b) => a.nom.localeCompare(b.nom));
-  } else {
+  } else if (triMode.value === "duration") {
     return filtered.sort((a, b) => {
       const dureeA =
         a.durees.find((d) => d.date === new Date().toDateString())?.duree ?? 0;
@@ -420,6 +450,9 @@ const projetsComp = computed(() => {
         b.durees.find((d) => d.date === new Date().toDateString())?.duree ?? 0;
       return dureeB - dureeA;
     });
+  } else {
+    // Manuel : on garde l'ordre tel quel (le store est déjà dans l'ordre manuel)
+    return filtered;
   }
 });
 

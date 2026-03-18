@@ -8,7 +8,11 @@
     :style="{ '--projet-color': projet.couleur ?? '#6366f1' }">
     <!-- Header -->
     <div class="projet-card__header">
-      <div class="flex items-center gap-2.5 min-w-0">
+      <div class="flex items-center gap-2 min-w-0">
+        <UIcon
+          v-if="canDrag"
+          name="lucide-grip-vertical"
+          class="drag-handle opacity-20 transition-opacity cursor-grab active:cursor-grabbing hover:opacity-100" />
         <div
           class="w-3 h-3 rounded-full shrink-0 ring-2 ring-offset-1 transition-all"
           :class="
@@ -147,6 +151,7 @@ const props = defineProps<{
   dureeTotale: number;
   isActive: boolean;
   sliderVisible: boolean;
+  canDrag?: boolean;
 }>();
 
 const emit = defineEmits<{

@@ -23,8 +23,9 @@
     "top": "Top"
   },
   "controls": {
-    "sortByDuration": "Efter varighed",
-    "sortByName": "Efter navn",
+    "sortByDuration": "Varighed",
+    "sortByName": "Navn",
+    "sortByManual": "Manuel",
     "hideArchived": "Skjul arkiverede",
     "showArchived": "Vis arkiverede",
     "newProject": "Nyt projekt"

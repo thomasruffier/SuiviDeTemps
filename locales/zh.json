@@ -23,8 +23,9 @@
     "top": "最高"
   },
   "controls": {
-    "sortByDuration": "按时长",
-    "sortByName": "按名称",
+    "sortByDuration": "时长",
+    "sortByName": "名称",
+    "sortByManual": "手动",
     "hideArchived": "隐藏已归档",
     "showArchived": "显示已归档",
     "newProject": "新建项目"
