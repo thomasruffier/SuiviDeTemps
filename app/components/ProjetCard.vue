@@ -4,6 +4,7 @@
     :class="{
       'projet-card--active': isActive,
       'projet-card--archived': projet.isArchived,
+      'can-drag': canDrag,
     }"
     :style="{ '--projet-color': projet.couleur ?? '#6366f1' }">
     <!-- Header -->
@@ -245,6 +246,13 @@ const menuItems = computed(() => [
 }
 .projet-card--archived {
   opacity: 0.6;
+}
+.can-drag .drag-handle:hover {
+  cursor: grab;
+  opacity: 1;
+}
+.can-drag:has(.drag-handle:active) {
+  cursor: grabbing;
 }
 .projet-card__header {
   display: flex;

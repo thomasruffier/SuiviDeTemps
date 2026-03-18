@@ -324,8 +324,10 @@ const gridEl = ref<HTMLElement | null>(null);
 const sliderVisible = ref<Record<string, boolean>>({});
 
 const { option } = useSortable(gridEl, projetsStore.projets, {
-  animation: 150,
+  animation: 300,
   handle: ".drag-handle",
+  ghostClass: "sortable-ghost",
+  dragClass: "sortable-drag",
   onUpdate: () => {
     projetsStore.saveProjets();
   },
@@ -643,5 +645,18 @@ watch(dernierJourFacturation, (nouv) => {
 .params-body {
   padding: 0.75rem 1rem 1rem;
   border-top: 1px solid var(--ui-border);
+}
+
+/* Sortable JS */
+.sortable-ghost {
+  opacity: 0.1 !important;
+  background: var(--ui-primary) !important;
+}
+.sortable-drag {
+  opacity: 1 !important;
+  transform: scale(1.02) rotate(1deg);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  cursor: grabbing !important;
+  z-index: 100 !important;
 }
 </style>
