@@ -1,5 +1,6 @@
 <template>
-  <div class="dashboard-resume">
+  <div
+    class="dashboard-resume sticky top-2 backdrop-blur-3xl border border-(--ui-border) bg-white/70 dark:bg-black/50 z-50">
     <!-- Stats rapides -->
     <div class="grid grid-cols-2 gap-3 mb-4 sm:grid-cols-4">
       <!-- Temps travaillé -->
