@@ -10,6 +10,19 @@
     "start": "nuxt start",
     "postinstall": "nuxt prepare"
   },
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": [
+        "linux",
+        "darwin",
+        "win32"
+      ],
+      "cpu": [
+        "x64",
+        "arm64"
+      ]
+    }
+  },
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@nuxt/image": "1.11.0",
