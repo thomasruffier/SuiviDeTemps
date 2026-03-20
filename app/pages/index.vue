@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-6 text-center">
       <SvgLogo class="mx-auto mb-3 w-14 opacity-80" />
-      <h1 class="text-2xl tracking-wide font-titre">{{ $t('app.title') }}</h1>
+      <h1 class="text-2xl tracking-wide font-titre">{{ $t("app.title") }}</h1>
     </div>
 
     <!-- Dernier jour de facturation -->
@@ -18,7 +18,7 @@
         <UIcon
           name="lucide-calendar-clock"
           :class="isFacturationOverdue ? 'text-error' : 'opacity-40'" />
-        <span class="text-sm">{{ $t('header.lastBillingDay') }}</span>
+        <span class="text-sm">{{ $t("header.lastBillingDay") }}</span>
       </div>
       <UInput
         v-model="dernierJourFacturation"
@@ -36,11 +36,16 @@
       <button class="params-toggle" @click="paramsOuverts = !paramsOuverts">
         <div class="flex gap-2 items-center">
           <UIcon name="lucide-settings-2" class="text-sm opacity-50" />
-          <span class="text-sm">{{ $t('params.title') }}</span>
+          <span class="text-sm">{{ $t("params.title") }}</span>
         </div>
         <div class="flex gap-3 items-center">
           <span class="font-mono text-xs opacity-50">
-            {{ $t('params.summary', { start: heureDebut, pause: formatDuree(midiPause) }) }}
+            {{
+              $t("params.summary", {
+                start: heureDebut,
+                pause: formatDuree(midiPause),
+              })
+            }}
           </span>
           <UIcon
             :name="paramsOuverts ? 'lucide-chevron-up' : 'lucide-chevron-down'"
@@ -51,7 +56,9 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <!-- Heure de début -->
           <div>
-            <label class="block mb-1 text-xs opacity-60">{{ $t('params.startTime') }}</label>
+            <label class="block mb-1 text-xs opacity-60">{{
+              $t("params.startTime")
+            }}</label>
             <USelect
               :items="heureDebutListe"
               v-model="heureDebut"
@@ -61,10 +68,11 @@
           <div>
             <div class="flex justify-between items-center mb-1">
               <label class="text-xs opacity-60"
-                >{{ $t('params.lunchPause') }} : {{ formatDuree(midiPause) }}</label
+                >{{ $t("params.lunchPause") }} :
+                {{ formatDuree(midiPause) }}</label
               >
               <label class="flex gap-2 items-center text-xs opacity-60">
-                {{ $t('params.alreadyEaten') }}
+                {{ $t("params.alreadyEaten") }}
                 <UCheckbox @click="jaiMangeClic = true" v-model="jaiMange" />
               </label>
             </div>
@@ -125,7 +133,11 @@
           @click="afficherArchives = !afficherArchives"
           size="xs"
           :icon="afficherArchives ? 'lucide-eye-off' : 'lucide-archive'"
-          :label="afficherArchives ? $t('controls.hideArchived') : $t('controls.showArchived')"
+          :label="
+            afficherArchives
+              ? $t('controls.hideArchived')
+              : $t('controls.showArchived')
+          "
           color="neutral"
           variant="subtle" />
       </div>
@@ -203,7 +215,10 @@
     </div>
 
     <!-- Modal Nouveau Projet -->
-    <UModal scrollable :title="$t('modals.newProjectTitle')" v-model:open="modalNouveauProjet">
+    <UModal
+      scrollable
+      :title="$t('modals.newProjectTitle')"
+      v-model:open="modalNouveauProjet">
       <template #body>
         <UFormField :label="$t('modals.projectName')">
           <UInput
@@ -232,7 +247,7 @@
       v-model:open="modalSupprimerProjet">
       <template #body>
         <p class="text-sm">
-          {{ $t('modals.deleteConfirm', { name: nomSupprimerProjet }) }}
+          {{ $t("modals.deleteConfirm", { name: nomSupprimerProjet }) }}
         </p>
       </template>
       <template #footer>
@@ -283,6 +298,11 @@
 
 <script setup lang="ts">
 import { useSortable } from "@vueuse/integrations/useSortable";
+const { t } = useI18n();
+
+useSeoMeta({
+  title: t("app.title"),
+});
 
 const projetsStore = useProjets();
 projetsStore.fetchProjets();
@@ -655,7 +675,9 @@ watch(dernierJourFacturation, (nouv) => {
 .sortable-drag {
   opacity: 1 !important;
   transform: scale(1.02) rotate(1deg);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
   cursor: grabbing !important;
   z-index: 100 !important;
 }
