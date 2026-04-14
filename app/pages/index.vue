@@ -94,6 +94,33 @@
             :items="[{ label: $t('params.manualEntry'), value: '' }]"
             v-model="jetravaillesur" />
         </div>
+        <!-- Payload API Key -->
+        <div class="pt-3 mt-3 border-t border-white/10">
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs opacity-60">Payload API Key</label>
+            <span
+              v-if="payloadConnexionStatus !== null"
+              class="text-xs font-mono"
+              :class="payloadConnexionStatus ? 'text-green-400' : 'text-red-400'">
+              {{ payloadConnexionStatus ? '✓ connecté' : '✗ token invalide' }}
+            </span>
+          </div>
+          <div class="flex gap-2">
+            <UInput
+              v-model="payloadApiKey"
+              type="password"
+              placeholder="Colle ton API Key Payload ici"
+              class="flex-1 font-mono text-xs"
+              autocomplete="off" />
+            <UButton
+              size="sm"
+              icon="lucide-save"
+              color="neutral"
+              variant="subtle"
+              :loading="payloadSaving"
+              @click="savePayloadToken" />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -310,6 +337,20 @@ projetsStore.fetchProjets();
 const triMode = ref<"name" | "duration" | "manual">("manual");
 const afficherArchives = ref(false);
 const paramsOuverts = ref(false);
+
+// -- Payload API Key --
+const payloadComposable = usePayload();
+const payloadApiKey = ref("");
+const payloadSaving = ref(false);
+const payloadConnexionStatus = ref<boolean | null>(null);
+
+async function savePayloadToken() {
+  payloadSaving.value = true;
+  payloadConnexionStatus.value = null;
+  await payloadComposable.saveToken(payloadApiKey.value);
+  payloadConnexionStatus.value = await payloadComposable.testConnection();
+  payloadSaving.value = false;
+}
 
 function toggleTri() {
   if (triMode.value === "manual") triMode.value = "name";
@@ -630,12 +671,20 @@ watch(now, (nouv) => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   const savedDate = localStorage.getItem("dernierJourFacturation");
   if (savedDate) {
     dernierJourFacturation.value = savedDate;
   }
+
+  // Charge le token Payload depuis localforage
+  const savedToken = await payloadComposable.getToken();
+  if (savedToken) {
+    payloadApiKey.value = savedToken;
+    payloadConnexionStatus.value = await payloadComposable.testConnection();
+  }
 });
+
 
 watch(dernierJourFacturation, (nouv) => {
   localStorage.setItem("dernierJourFacturation", nouv);

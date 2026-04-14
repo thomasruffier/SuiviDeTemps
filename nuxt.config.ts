@@ -49,7 +49,11 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["types"],
   },
-  runtimeConfig: {},
+  runtimeConfig: {
+    public: {
+      payloadUrl: process.env.NUXT_PUBLIC_PAYLOAD_URL || 'https://admin.lapierrequimousse.com',
+    },
+  },
   scripts: {},
 
   googleFonts: {

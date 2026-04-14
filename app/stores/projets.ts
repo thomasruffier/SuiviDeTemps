@@ -1,5 +1,6 @@
 export const useProjets = defineStore("projets", () => {
   const { $db } = useNuxtApp();
+  const payload = usePayload();
   const projets = ref<Projet[]>([]);
 
   // Couleurs prédéfinies pour les projets
@@ -63,6 +64,7 @@ export const useProjets = defineStore("projets", () => {
     });
 
     await saveProjets();
+    void payload.syncProjet(projets.value[projets.value.length - 1]!, projets.value.length - 1);
     return true;
   }
 
@@ -72,6 +74,7 @@ export const useProjets = defineStore("projets", () => {
 
     projets.value.splice(index, 1);
     saveProjets();
+    void payload.deleteProjet(nom);
     return true;
   }
 
@@ -105,6 +108,7 @@ export const useProjets = defineStore("projets", () => {
       item.duree = duree;
       await saveProjets();
     }
+    void payload.syncSession(nom, madate.toDateString(), duree, item?.note ?? '');
   }
 
   async function incrementDuree(nom: string, madate: Date, delta: number) {
@@ -122,6 +126,7 @@ export const useProjets = defineStore("projets", () => {
     entry.duree += delta;
 
     await saveProjets();
+    void payload.syncSession(nom, dateKey, entry.duree, entry.note ?? '');
   }
 
   async function updateAllProjets(projet: Projet[]) {
@@ -136,6 +141,7 @@ export const useProjets = defineStore("projets", () => {
 
     projet.isArchived = true;
     await saveProjets();
+    void payload.syncProjet(projet);
     return true;
   }
 
@@ -145,6 +151,7 @@ export const useProjets = defineStore("projets", () => {
 
     projet.isArchived = false;
     await saveProjets();
+    void payload.syncProjet(projet);
     return true;
   }
 
@@ -156,6 +163,8 @@ export const useProjets = defineStore("projets", () => {
     projet.nom = nouveauNom;
     projet.derniereModification = new Date().toDateString();
     await saveProjets();
+    // Supprime l'ancien doc Payload et crée le nouveau
+    void payload.deleteProjet(ancienNom).then(() => payload.syncProjet(projet));
     return true;
   }
 
@@ -169,6 +178,7 @@ export const useProjets = defineStore("projets", () => {
     duree.note = note;
     projet.derniereModification = new Date().toDateString();
     await saveProjets();
+    void payload.syncSession(nomProjet, date, duree.duree, note);
     return true;
   }
 
@@ -179,6 +189,7 @@ export const useProjets = defineStore("projets", () => {
     projet.description = description;
     projet.derniereModification = new Date().toDateString();
     await saveProjets();
+    void payload.syncProjet(projet);
     return true;
   }
 
@@ -188,6 +199,7 @@ export const useProjets = defineStore("projets", () => {
 
     projet.couleur = couleur;
     await saveProjets();
+    void payload.syncProjet(projet);
     return true;
   }
 
@@ -281,6 +293,7 @@ export const useProjets = defineStore("projets", () => {
 
       projet.durees.splice(index, 1);
       await saveProjets();
+      void payload.deleteSession(nom, date);
       return true;
     },
     exportProjets: async function exportProjets() {
