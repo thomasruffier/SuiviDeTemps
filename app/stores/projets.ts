@@ -317,6 +317,8 @@ export const useProjets = defineStore("projets", () => {
           try {
             const importedProjets = JSON.parse(e.target.result as string);
             await updateAllProjets(importedProjets);
+            // Sync tout vers Payload après l'import
+            void payload.syncAll(importedProjets);
           } catch (error) {
             console.error("Erreur lors de l'importation des projets:", error);
           }
