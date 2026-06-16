@@ -82,6 +82,10 @@
     "confirmDelete": "Delete",
     "renameProjectTitle": "Rename project",
     "newName": "New name",
-    "confirmRename": "Rename"
+    "confirmRename": "Rename",
+    "projectExistsPayload": "This project already exists on Payload CMS",
+    "projectExistsLocal": "This project already exists in your list",
+    "noConnectionPayload": "Could not connect to Payload CMS. Check your API key or connection.",
+    "errorCreatingProject": "Error creating project"
   }
 }

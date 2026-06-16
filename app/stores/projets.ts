@@ -18,36 +18,26 @@ export const useProjets = defineStore("projets", () => {
   ];
 
   async function fetchProjets() {
-    const saved: any = await $db.getItem("projets");
-    projets.value = saved ? reviveProjets(saved) : [];
+    projets.value = await payload.fetchAllFromPayload();
     return projets.value;
   }
 
-  function reviveProjets(data: any[]): Projet[] {
-    return data.map((p, index) => ({
-      nom: p.nom,
-      derniereModification: p.derniereModification,
-      durees: p.durees.map((d: any) => ({
-        date: d.date,
-        duree: d.duree,
-        note: d.note ?? "",
-      })),
-      isArchived: p.isArchived ?? false,
-      description: p.description ?? "",
-      couleur:
-        p.couleur ?? couleursDisponibles[index % couleursDisponibles.length],
-    }));
-  }
-
-  async function saveProjets() {
-    const raw = toRaw(projets.value);
-    await $db.setItem("projets", structuredClone(raw));
-  }
-
   async function createProjet(nom: string) {
-    if (projets.value.some((e) => e.nom === nom)) return false;
+    if (projets.value.some((e) => e.nom === nom)) {
+      throw new Error("local_exists");
+    }
 
-    projets.value.push({
+    const connectionOk = await payload.testConnection();
+    if (!connectionOk) {
+      throw new Error("no_connection");
+    }
+
+    const exists = await payload.checkProjectExists(nom);
+    if (exists) {
+      throw new Error("payload_exists");
+    }
+
+    const newProj: Projet = {
       nom,
       durees: [
         {
@@ -61,38 +51,19 @@ export const useProjets = defineStore("projets", () => {
       description: "",
       couleur:
         couleursDisponibles[projets.value.length % couleursDisponibles.length],
-    });
+    };
 
-    await saveProjets();
-    void payload.syncProjet(projets.value[projets.value.length - 1]!, projets.value.length - 1);
+    projets.value.push(newProj);
+    await payload.syncProjet(newProj, projets.value.length - 1);
     return true;
   }
 
-  function deleteProjet(nom: string) {
+  async function deleteProjet(nom: string) {
     const index = projets.value.findIndex((e) => e.nom === nom);
     if (index === -1) return false;
 
     projets.value.splice(index, 1);
-    saveProjets();
-    void payload.deleteProjet(nom);
-    return true;
-  }
-
-  async function addNewDateToProjet(
-    nom: string,
-    madate: Date,
-    duree: number = 0,
-  ) {
-    const projet = projets.value.find((e) => e.nom === nom);
-    if (!projet) return false;
-
-    projet.durees.push({
-      date: madate.toDateString(),
-      duree,
-      note: "",
-    });
-
-    await saveProjets();
+    await payload.deleteProjet(nom);
     return true;
   }
 
@@ -100,15 +71,16 @@ export const useProjets = defineStore("projets", () => {
     const projet = projets.value.find((e) => e.nom === nom);
     if (!projet) return false;
 
-    const item = projet.durees.find((e) => e.date === madate.toDateString());
+    let item = projet.durees.find((e) => e.date === madate.toDateString());
 
     if (!item) {
-      await addNewDateToProjet(nom, madate, duree);
+      item = { date: madate.toDateString(), duree, note: "" };
+      projet.durees.push(item);
     } else {
       item.duree = duree;
-      await saveProjets();
     }
-    void payload.syncSession(nom, madate.toDateString(), duree, item?.note ?? '');
+    await payload.syncSession(nom, madate.toDateString(), duree, item.note ?? '');
+    return true;
   }
 
   async function incrementDuree(nom: string, madate: Date, delta: number) {
@@ -125,13 +97,11 @@ export const useProjets = defineStore("projets", () => {
 
     entry.duree += delta;
 
-    await saveProjets();
-    void payload.syncSession(nom, dateKey, entry.duree, entry.note ?? '');
+    await payload.syncSession(nom, dateKey, entry.duree, entry.note ?? '');
   }
 
-  async function updateAllProjets(projet: Projet[]) {
+  function updateAllProjets(projet: Projet[]) {
     projets.value = projet;
-    await saveProjets();
     return true;
   }
 
@@ -140,8 +110,7 @@ export const useProjets = defineStore("projets", () => {
     if (!projet) return false;
 
     projet.isArchived = true;
-    await saveProjets();
-    void payload.syncProjet(projet);
+    await payload.syncProjet(projet);
     return true;
   }
 
@@ -150,8 +119,7 @@ export const useProjets = defineStore("projets", () => {
     if (!projet) return false;
 
     projet.isArchived = false;
-    await saveProjets();
-    void payload.syncProjet(projet);
+    await payload.syncProjet(projet);
     return true;
   }
 
@@ -162,9 +130,7 @@ export const useProjets = defineStore("projets", () => {
 
     projet.nom = nouveauNom;
     projet.derniereModification = new Date().toDateString();
-    await saveProjets();
-    // Supprime l'ancien doc Payload et crée le nouveau
-    void payload.deleteProjet(ancienNom).then(() => payload.syncProjet(projet));
+    await payload.renameProjetAndSessions(ancienNom, nouveauNom, projet);
     return true;
   }
 
@@ -172,13 +138,15 @@ export const useProjets = defineStore("projets", () => {
     const projet = projets.value.find((e) => e.nom === nomProjet);
     if (!projet) return false;
 
-    const duree = projet.durees.find((d) => d.date === date);
-    if (!duree) return false;
-
-    duree.note = note;
+    let duree = projet.durees.find((d) => d.date === date);
+    if (!duree) {
+      duree = { date, duree: 0, note };
+      projet.durees.push(duree);
+    } else {
+      duree.note = note;
+    }
     projet.derniereModification = new Date().toDateString();
-    await saveProjets();
-    void payload.syncSession(nomProjet, date, duree.duree, note);
+    await payload.syncSession(nomProjet, date, duree.duree, note);
     return true;
   }
 
@@ -188,8 +156,7 @@ export const useProjets = defineStore("projets", () => {
 
     projet.description = description;
     projet.derniereModification = new Date().toDateString();
-    await saveProjets();
-    void payload.syncProjet(projet);
+    await payload.syncProjet(projet);
     return true;
   }
 
@@ -198,8 +165,7 @@ export const useProjets = defineStore("projets", () => {
     if (!projet) return false;
 
     projet.couleur = couleur;
-    await saveProjets();
-    void payload.syncProjet(projet);
+    await payload.syncProjet(projet);
     return true;
   }
 
@@ -264,6 +230,13 @@ export const useProjets = defineStore("projets", () => {
     return jours;
   }
 
+  async function updateProjectsOrder() {
+    for (let i = 0; i < projets.value.length; i++) {
+      const p = projets.value[i]!;
+      await payload.syncProjet(p, i);
+    }
+  }
+
   return {
     projets,
     couleursDisponibles,
@@ -272,7 +245,6 @@ export const useProjets = defineStore("projets", () => {
     updateProjet,
     incrementDuree,
     updateAllProjets,
-    saveProjets,
     deleteProjet,
     archiveProjet,
     unarchiveProjet,
@@ -292,8 +264,7 @@ export const useProjets = defineStore("projets", () => {
       if (index === -1) return false;
 
       projet.durees.splice(index, 1);
-      await saveProjets();
-      void payload.deleteSession(nom, date);
+      await payload.deleteSession(nom, date);
       return true;
     },
     exportProjets: async function exportProjets() {
@@ -316,9 +287,8 @@ export const useProjets = defineStore("projets", () => {
         if (e.target?.result) {
           try {
             const importedProjets = JSON.parse(e.target.result as string);
-            await updateAllProjets(importedProjets);
-            // Sync tout vers Payload après l'import
-            void payload.syncAll(importedProjets);
+            updateAllProjets(importedProjets);
+            await payload.syncAll(importedProjets);
           } catch (error) {
             console.error("Erreur lors de l'importation des projets:", error);
           }
@@ -326,5 +296,6 @@ export const useProjets = defineStore("projets", () => {
       };
       reader.readAsText(file);
     },
+    updateProjectsOrder,
   };
 });

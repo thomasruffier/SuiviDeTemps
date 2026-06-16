@@ -247,12 +247,13 @@
       :title="$t('modals.newProjectTitle')"
       v-model:open="modalNouveauProjet">
       <template #body>
-        <UFormField :label="$t('modals.projectName')">
+        <UFormField :label="$t('modals.projectName')" :error="errorMessage">
           <UInput
             class="w-full"
             v-model="projetNom"
             :placeholder="$t('modals.projectName')"
-            @keyup.enter="createAndClose" />
+            @keyup.enter="createAndClose"
+            :disabled="creating" />
         </UFormField>
       </template>
       <template #footer>
@@ -262,7 +263,8 @@
             color="primary"
             @click="createAndClose"
             variant="solid"
-            :disabled="!projetNom.trim()" />
+            :disabled="!projetNom.trim() || creating"
+            :loading="creating" />
         </div>
       </template>
     </UModal>
@@ -327,12 +329,7 @@
 import { useSortable } from "@vueuse/integrations/useSortable";
 const { t } = useI18n();
 
-useSeoMeta({
-  title: t("app.title"),
-});
-
 const projetsStore = useProjets();
-projetsStore.fetchProjets();
 
 const triMode = ref<"name" | "duration" | "manual">("manual");
 const afficherArchives = ref(false);
@@ -348,7 +345,11 @@ async function savePayloadToken() {
   payloadSaving.value = true;
   payloadConnexionStatus.value = null;
   await payloadComposable.saveToken(payloadApiKey.value);
-  payloadConnexionStatus.value = await payloadComposable.testConnection();
+  const ok = await payloadComposable.testConnection();
+  payloadConnexionStatus.value = ok;
+  if (ok) {
+    await projetsStore.fetchProjets();
+  }
   payloadSaving.value = false;
 }
 
@@ -365,6 +366,8 @@ const nomSupprimerProjet = ref("");
 const nomRenommerProjet = ref("");
 const nouveauNomProjet = ref("");
 const projetNom = ref("");
+const errorMessage = ref("");
+const creating = ref(false);
 const midiPause = ref(90);
 const heureDebut = ref("08:30");
 const jaiMange = ref(false);
@@ -389,8 +392,8 @@ const { option } = useSortable(gridEl, projetsStore.projets, {
   handle: ".drag-handle",
   ghostClass: "sortable-ghost",
   dragClass: "sortable-drag",
-  onUpdate: () => {
-    projetsStore.saveProjets();
+  onUpdate: async () => {
+    await projetsStore.updateProjectsOrder();
   },
 });
 
@@ -402,12 +405,6 @@ watch(
   { immediate: true },
 );
 
-interface DureesTotale {
-  nom: string;
-  duree: number;
-}
-const dureesTotales: Ref<DureesTotale[]> = ref([]);
-
 // --- Détection du changement de jour (reset minuit) ---
 const currentDay = ref(new Date().toDateString());
 
@@ -416,24 +413,47 @@ function toggleSlider(projet: Projet) {
 }
 
 function getDureeTotale(nom: string): number {
-  return dureesTotales.value.find((d) => d.nom === nom)?.duree ?? 0;
+  const p = projets.value.find((x) => x.nom === nom);
+  if (!p) return 0;
+  const entry = p.durees.find((d) => d.date === new Date().toDateString());
+  return entry?.duree ?? 0;
 }
 
-function setDureeTotale(nom: string, duree: number) {
-  const dt = dureesTotales.value.find((d) => d.nom === nom);
-  if (dt) {
-    dt.duree = duree;
-  } else {
-    dureesTotales.value.push({ nom, duree });
+async function setDureeTotale(nom: string, duree: number) {
+  await projetsStore.updateProjet(nom, duree, new Date());
+}
+async function createAndClose() {
+  const nom = projetNom.value.trim();
+  if (!nom) return;
+  errorMessage.value = "";
+  creating.value = true;
+  try {
+    const success = await projetsStore.createProjet(nom);
+    if (success) {
+      modalNouveauProjet.value = false;
+      projetNom.value = "";
+    }
+  } catch (err: any) {
+    if (err.message === "payload_exists") {
+      errorMessage.value = t("modals.projectExistsPayload");
+    } else if (err.message === "local_exists") {
+      errorMessage.value = t("modals.projectExistsLocal");
+    } else if (err.message === "no_connection") {
+      errorMessage.value = t("modals.noConnectionPayload");
+    } else {
+      errorMessage.value = err.message || t("modals.errorCreatingProject");
+    }
+  } finally {
+    creating.value = false;
   }
 }
 
-function createAndClose() {
-  if (!projetNom.value.trim()) return;
-  projetsStore.createProjet(projetNom.value.trim());
-  modalNouveauProjet.value = false;
-  projetNom.value = "";
-}
+watch(modalNouveauProjet, (val) => {
+  if (val) {
+    errorMessage.value = "";
+    projetNom.value = "";
+  }
+});
 
 function deleteAndClose() {
   modalSupprimerProjet.value = false;
@@ -447,9 +467,6 @@ function renameAndClose() {
     nouveauNomProjet.value === nomRenommerProjet.value
   )
     return;
-  // Also update dureesTotales key
-  const dt = dureesTotales.value.find((d) => d.nom === nomRenommerProjet.value);
-  if (dt) dt.nom = nouveauNomProjet.value.trim();
 
   // Update sliderVisible
   if (sliderVisible.value[nomRenommerProjet.value]) {
@@ -478,12 +495,6 @@ async function onJourDureeUpdate(
   duree: number,
 ) {
   await projetsStore.updateProjet(nomProjet, duree, new Date(date));
-
-  // Si c'est aujourd'hui, mettre aussi à jour dureesTotales
-  if (date === new Date().toDateString()) {
-    const dt = dureesTotales.value.find((d) => d.nom === nomProjet);
-    if (dt) dt.duree = duree;
-  }
 }
 
 async function onJourSupprimer(nomProjet: string, date: string) {
@@ -567,16 +578,6 @@ watch(tempsADepenser, async (nouv, anc) => {
 
   if (nouv > 0) {
     await projetsStore.incrementDuree(nom, new Date(), nouv);
-
-    const projet = projets.value.find((p) => p.nom === nom);
-    if (projet) {
-      const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nom);
-      if (dureeTotaleProjet) {
-        dureeTotaleProjet.duree += nouv;
-      } else {
-        dureesTotales.value.push({ nom, duree: nouv });
-      }
-    }
   }
 });
 
@@ -586,59 +587,8 @@ watch(jetravaillesur, async (nouv) => {
   const currentTempsADepenser = tempsADepenser.value;
   if (currentTempsADepenser > 0) {
     await projetsStore.incrementDuree(nouv, new Date(), currentTempsADepenser);
-
-    const projet = projets.value.find((p) => p.nom === nouv);
-    if (projet) {
-      const dureeTotaleProjet = dureesTotales.value.find((d) => d.nom === nouv);
-      if (dureeTotaleProjet) {
-        dureeTotaleProjet.duree += currentTempsADepenser;
-      } else {
-        dureesTotales.value.push({ nom: nouv, duree: currentTempsADepenser });
-      }
-    }
   }
 });
-
-watch(
-  projets,
-  (nouv) => {
-    nouv.forEach((e) => {
-      const dureeTemp =
-        e.durees.find((e) => e.date === new Date().toDateString())?.duree ?? 0;
-      if (!dureesTotales.value.some((j) => j.nom == e.nom)) {
-        dureesTotales.value.push({ nom: e.nom, duree: dureeTemp });
-      }
-    });
-  },
-  { deep: true },
-);
-
-watch(
-  dureesTotales,
-  (nouv, anc) => {
-    if (!projets.value || projets.value.length == 0) return;
-    const updated = projets.value.map((p) => {
-      const copy = structuredClone(toRaw(p));
-      const exist = nouv.find((d) => d.nom === p.nom);
-
-      if (exist) {
-        let today = new Date().toDateString();
-        let d = copy.durees.find((x) => x.date === today);
-
-        if (d) {
-          d.duree = exist.duree;
-        } else {
-          copy.durees.push({ date: today, duree: exist.duree, note: "" });
-        }
-      }
-
-      return copy;
-    });
-
-    projetsStore.updateAllProjets(updated);
-  },
-  { deep: true },
-);
 
 const heureDeFin = computed(() => {
   return new Date(
@@ -661,10 +611,6 @@ watch(now, (nouv) => {
   const today = nouv.toDateString();
   if (today !== currentDay.value) {
     currentDay.value = today;
-    dureesTotales.value = dureesTotales.value.map((d) => ({
-      nom: d.nom,
-      duree: 0,
-    }));
     jetravaillesur.value = "";
     jaiMange.value = false;
     jaiMangeClic.value = false;
@@ -681,7 +627,11 @@ onMounted(async () => {
   const savedToken = await payloadComposable.getToken();
   if (savedToken) {
     payloadApiKey.value = savedToken;
-    payloadConnexionStatus.value = await payloadComposable.testConnection();
+    const connectionOk = await payloadComposable.testConnection();
+    payloadConnexionStatus.value = connectionOk;
+    if (connectionOk) {
+      await projetsStore.fetchProjets();
+    }
   }
 });
 
